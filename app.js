@@ -1,6 +1,7 @@
 const express = require("express");
 const cors = require('cors');
 const Joi = require('joi');
+const pool = require("./database");
 
 const app = express();
 
