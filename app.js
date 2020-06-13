@@ -1,6 +1,6 @@
 const express = require("express");
 const cors = require('cors');
-const Joi = require('joi'); // joi is used for data validation
+const Joi = require('joi');
 
 const app = express();
 
@@ -11,13 +11,7 @@ app.get('/', (req, res) => {
     res.send("hello world");
 });
 
-app.get('/api/testing/:id', (req, res) => {
-    res.send(req.query);
-})
-
-
-
 // PORT
-const port = process.env.PORT || 3000;
+const port = process.env.PORT || 5000;
 
-app.listen(port);
+app.listen(port, () => console.log('server has started on port ' + port));
