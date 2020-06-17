@@ -70,7 +70,6 @@ app.put('/profile/:id', (req, res) => {
 
 
 app.post('/set_data', (req, res) => {
-
     const temp = req.body.temperature;
     const water = req.body.water;
     const light= req.body.light;
@@ -89,6 +88,24 @@ app.post('/set_data', (req, res) => {
             })
             });
 
+app.post('/login', (req, res) => {
+    const username = req.body.username;
+    const password = req.body.password;
+    const email = req.body.email;
+    const created_on = NOW();
+    const login = null;
+    db.none('insert into account (username, password, email, created_on, last_login)' +
+            'values($1, $2, $3, NOW(), $4)', [username, password, email, login])
+            .then(result => {
+                res.status(200).json({
+                    status: 'success',
+                    message: 'successfully registered'
+                });
+            })
+            .catch(error => {
+                console.log(error)
+            })
+            });
 
 
 // PORT
