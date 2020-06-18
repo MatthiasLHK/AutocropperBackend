@@ -11,9 +11,8 @@ const app = express();
 app.use(express.json());
 app.use(cors());
 
-console.log('test');
 
-app.get('/',(req,res)=>{
+app.get('',(req,res)=>{
     res.send("Welcome, successfully set up remote! Matt and Jonas!");
 });
 
