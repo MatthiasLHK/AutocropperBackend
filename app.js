@@ -13,7 +13,7 @@ app.use(cors());
 
 
 app.get('',(req,res)=>{
-    res.send("Welcome, successfully set up remote! Matt and Jonas!");
+    res.send("Welcome, successfully set up remote! Matt and Jonas! Testing round 2 for editiing changes!");
 });
 
 // database data
