@@ -13,7 +13,7 @@ app.use(cors());
 
 // database data
 const data = db.manyOrNone('SELECT user_id, username, password, email, created_on FROM account')
-    .then(x=>{app.get('/profile', (req, res) => {
+    .then(x=>{app.get('/test', (req, res) => {
         console.log(res.data);
         res.send(x);
     });
@@ -30,9 +30,8 @@ app.get('/results/:id', (req, res) => {
     })
 })
 
-app.get('/profile/:user', (req, res) => {
-    const userId = req.params.user;
-    db.one("SELECT * from account where user_id = $1", [userId])
+app.get('/name', (req, res) => {
+    db.one("SELECT * from account where user_id = 13" )
     .then(result => {
         res.send(result);
     })
@@ -92,7 +91,6 @@ app.post('/login', (req, res) => {
     const username = req.body.username;
     const password = req.body.password;
     const email = req.body.email;
-    const created_on = NOW();
     const login = null;
     db.none('insert into account (username, password, email, created_on, last_login)' +
             'values($1, $2, $3, NOW(), $4)', [username, password, email, login])
