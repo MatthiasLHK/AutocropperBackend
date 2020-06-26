@@ -11,107 +11,164 @@ const app = express();
 app.use(express.json());
 app.use(cors());
 
-
-app.get('',(req,res)=>{
+/////////////////////////////////// TESTING COMMANDS /////////////////////////////////////////////////
+app.get('/',(req,res)=>{
     res.send("Welcome, successfully set up remote! Matt and Jonas! Testing round 2 for editiing changes!");
 });
 
-// database data
-// const data = db.manyOrNone('SELECT user_id, username, password, email, created_on FROM account')
-//     .then(x=>{app.get('/profile', (req, res) => {
-//         console.log(res.data);
-//         res.send(x);
-//     });
+app.get('/connected',(req,res)=>{
+    res.send("connected");
+});
+
+app.get('/connected/:name',(req,res)=>{
+    const user = req.params.name;
+    // console.log(user);
+    res.send(user+' connected');
+});
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////
+
+/////////////////////// GETTING LIST OF CONNECTED DEVICES OF THE USER ////////////////////////////////
+
+// app.get('/connected_devices/:id',(req,res)=>{
+//     const id = req.params.id;
+//     db.manyOrNone('SELECT pair_id, device_id, registered_on, power_on FROM user_device WHERE user_id = id').then(x=>{res.send(x)});
 // });
+
+app.get('/connected_devices/:user_id',(req,res)=>{
+    const user_id = req.params.user_id;
+    db.manyOrNone('SELECT id, name FROM tester WHERE id = $1',[user_id]).then(x=>{res.send(x)});
+});
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////
+
+/////////////////////// GETTING THE SETTINGS OF A DEVICE ////////////////////////////////
+
+app.get('/connected_devices/settings/:device_id',(req,res)=>{
+    const device_id = req.params.device_id;
+    db.manyOrNone('SELECT temperature, water, light, humidity, edited_on FROM devices WHERE device_id = $1',[device_id])
+        .then(x=>res.send(x));
+});
+
+// to get all settings for all connected device of a user
+
+// app.get('/connected_devices_settings/:user_id',(req,res)=>{
+//     const user_id = req.params.user_id;
+//     const list_of_settings_of_user = [];
+//     const list_registered_devices = [];
 //
-// app.get('/results/:id', (req, res) => {
-//     const setting_id = req.params.id;
-//     db.one("SELECT * from settings where setting_id = $1", [setting_id])
-//     .then(result => {
-//         res.send(result);
-//     })
-//     .catch(error => {
-//         console.log(error)
-//     })
-// })
-//
-// app.get('/profile/:user', (req, res) => {
-//     const userId = req.params.user;
-//     db.one("SELECT * from account where user_id = $1", [userId])
-//     .then(result => {
-//         res.send(result);
-//     })
-//     .catch(error => {
-//         console.log(error)
-//     })
-// });
-//
-// app.delete('/profile/:id', async (req, res) => {
-//     const { id } = req.params;
-//     db.result('delete from account where user_id = $1', id)
-//     .then(result => {
-//         res.status(200).json({
-//             status: 'success',
-//             message: 'Removed user ' + id
-//         });
-//     })
-//     .catch(error => {
-//         console.log(error)
-//     })
-// })
-//
-//
-// app.put('/profile/:id', (req, res) => {
-//     const userId = req.params.id;
-//     const username = "jonasngs";
-//     db.none('update account set username=$1 where user_id=$2', [username, userId])
-//     .then(result => {
-//         res.send(result);
-//     })
-//     .catch(error => {
-//         console.log(error)
-//     })
-// })
-//
-//
-// app.post('/set_data', (req, res) => {
-//     const temp = req.body.temperature;
-//     const water = req.body.water;
-//     const light= req.body.light;
-//     const humidity= req.body.humidity;
-//     const name = "corn";
-//     db.none('insert into settings (plant_name, temperature, humidity, light, water)' +
-//             'values($1, $2, $3, $4, $5)', [name, temp, humidity, light, water])
-//             .then(result => {
-//                 res.status(200).json({
-//                     status: 'success',
-//                     message: 'added new plant'
-//                 });
-//             })
-//             .catch(error => {
-//                 console.log(error)
-//             })
+//     db.manyOrNone('SELECT device_id FROM user_device WHERE user_id = $1',[user_id])
+//         .then(x=>{
+//             x.forEach(row=>{
+//                 const id = row.device_id;
+//                 list_registered_devices.push(id);
 //             });
+//             list_registered_devices.forEach(id=>{
+//                 db.manyOrNone('SELECT * FROM devices WHERE device_id = $1',[id])
+//                     .then(x=>{
+//                         console.log(x);
+//                         });
+//             });
+//             console.log(list_of_settings_of_user);
+//         });
+// });
+
+app.get('/connected_devices_settings/:user_id',(req,res)=>{
+    const list_of_settings_of_user = [];
+    const list_registered_devices = [];
+
+
+    const user_id = req.params.user_id;
+    console.log(user_id);
+
+    db.manyOrNone('SELECT name FROM tester WHERE id = $1',[user_id])
+        .then(x=>{
+            x.forEach(row=>{
+                const name = row.name;
+                list_registered_devices.push(name);
+            });
+            console.log(list_registered_devices); // point A
+            res.send(list_registered_devices);
+        });
+        console.log(list_registered_devices); // point B
+});
+
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////
+
+
+/////////////////////////////////////////// LOGIN AUTH ///////////////////////////////////////////
+
+app.get('/login/:username/:password',(req,res)=>{
+    const user = req.params.username;
+    const pass = req.params.password;
+
+    db.manyOrNone('SELECT password FROM user_detail WHERE username = $1',[user])
+        .then(x=>{
+                const p = x.password;
+                if(p = pass){
+                    res.send('Successful login'); // insert here to rediect to homepage
+                }
+                else{
+                    res.send('Failed to login'); // clear password field
+                }
+        });
+});
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////
+
+//////////////////////////////////////////// REGISTER /////////////////////////////////////////////
+
+
+
+app.post('/register/:username/:password/:email',(req,res)=>{
+    const user = req.params.username;
+    const pass = req.params.password;
+    const email = req.params.email;
+
+    if(pass.length>20){
+        res.send('Password too long, 20 characters');
+    }
+    else{
+        // db.none('INSERT INTO user_detail($1,$2,$3,NOW())',[user,pass,email])
+        //     .catch(e=>res.send('Username taken $1',[e]));
+        console.log(user);
+        console.log(pass);
+        console.log(email);
+        res.send(user+pass+email);
+    }
+});
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////
+
+// app.post('/test/:id/:name',(req,res)=>{
+//     const id = req.params.id;
+//     const name = req.parmas.name;
+//
+//     db.none('INSERT INTO tester (id,name) VALUES ($1,$2)',[id,name]);
+//     res.send('done');
+// });
 //
 // app.post('/login', (req, res) => {
-//     const username = req.body.username;
-//     const password = req.body.password;
-//     const email = req.body.email;
-//     const created_on = NOW();
-//     const login = null;
-//     db.none('insert into account (username, password, email, created_on, last_login)' +
-//             'values($1, $2, $3, NOW(), $4)', [username, password, email, login])
-//             .then(result => {
-//                 res.status(200).json({
-//                     status: 'success',
-//                     message: 'successfully registered'
-//                 });
-//             })
-//             .catch(error => {
-//                 console.log(error)
-//             })
-//             });
+//     res.send('done');
+// });
 
+/////////////////////////////////// CONNECTION TO HARDWARE /////////////////////////////////////////////
+
+app.get('/connected_device/:device_id/set_settings/:setting_id',(req,res)=>{ // for testing, set device to be 1001
+                                                                             // and change the url such that para is in the axios part in frontend
+    const id = req.params.setting_id;
+    const data = 0;
+    db.one('SELECT * FROM private_settings WHERE setting_id = $1',[id])
+        .then(x=>{
+            data = parseInt(x.temperature)*1000000 + parseInt(x.water*10000) + parseInt(x.light*100) + parseInt(x.humidity);
+            res.send(data);
+        });
+});
+
+app.get('/connected_device/1001/set_settings',(req,res)=>{
+    res.send('44332211');
+});
 
 // PORT
 const port = process.env.PORT || 5000;
