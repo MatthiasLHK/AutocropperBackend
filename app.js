@@ -2,14 +2,21 @@ const express = require("express");
 const cors = require('cors');
 const Joi = require('joi');
 const pool = require("./database");
-const pgp = require('pg-promise')();
-const cn = 'postgres://MatthiasLHK:autocropper123@db-autocropper-v2.czixlgpzza3d.ap-southeast-1.rds.amazonaws.com:5432/autocropperdb';
-const db = pgp(cn);
+// const pgp = require('pg-promise')();
+// const cn = 'postgres://MatthiasLHK:autocropper123@db-autocropper-v2.czixlgpzza3d.ap-southeast-1.rds.amazonaws.com:5432/autocropperdb';
+// const db = pgp(cn);
 
 const app = express();
 
 app.use(express.json());
 app.use(cors());
+
+const R = require("./routes");
+
+app.use('/',R);
+
+
+
 
 /////////////////////////////////// TESTING COMMANDS /////////////////////////////////////////////////
 app.get('/',(req,res)=>{
@@ -175,4 +182,4 @@ const port = process.env.PORT || 5000;
 
 app.listen(port, () => console.log('server has started on port ' + port));
 
-module.exports = db;
+module.exports = app;
