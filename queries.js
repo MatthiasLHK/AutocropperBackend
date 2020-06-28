@@ -5,9 +5,9 @@ const db = pgp(cn);
 
 
 function createAccount(req,res){
-    const user = req.params.username;
-    const pass = req.params.password;
-    const email = req.params.email;
+    const user = req.body.username;
+    const pass = req.body.password;
+    const email = req.body.email;
 
     if(pass.length>20){
         res.end('Password too long, 20 characters'); // need check again;
@@ -34,12 +34,12 @@ function getLoginAuth(req,res){
 }
 
 function getConnectedDevice(req,res){
-    const id = req.params.id;
+    const id = req.body.id;
     db.manyOrNone('SELECT pair_id, device_id, registered_on, power_on FROM user_device WHERE user_id = $1',[id]).then(x=>{res.send(x)});
 }
 
 function getFullConnectedDevice(req,res){
-    const id = req.params.id;
+    const id = req.body.id;
     db.manyOrNone('SELECT pair_id, device_id, registered_on, power_on FROM user_device WHERE user_id = id')
         .then(x=>{
             const device_ids = [];
@@ -80,13 +80,13 @@ function getNewPost(req,res){
 }
 
 function getProfile(req,res){
-    const id = req.params.user_id;
+    const id = req.body.user_id;
     db.one('SELECT * FROM user_detail WHERE user_id = $1',[id]).then(x=>res.send(x));
 }
 
 function registerNewDevice(req,res){
-    const id = req.params.user_id;
-    const device = req.params.device_id;
+    const id = req.body.user_id;
+    const device = req.body.device_id;
     db.none('INSERT INTO user_device(user_id,device_id,registered_on,power_on VALUES($1,$2,NOW(),FALSE)',[id,device])
         .then(()=>{
             res.status(200).json({status:'Success',message:'Added new device'});
@@ -99,18 +99,18 @@ function getGeneralSettings(req,res){
 }
 
 function getPrivateSettings(req,res){
-    const id = req.params.user_id;
+    const id = req.body.user_id;
     db.manyOrNone('SELECT * FROM private_settings WHERE user_id = $1',[id])
         .then(x=>{res.send(x);});
 }
 
 function addNewSettings(req,res){
-    const name = req.params.name;
-    const id = req.params.user_id;
-    const temperature = req.params.temperature;
-    const water = req.params.water;
-    const light = req.params.light;
-    const humid = req.params.humidity;
+    const name = req.body.name;
+    const id = req.body.user_id;
+    const temperature = req.body.temperature;
+    const water = req.body.water;
+    const light = req.body.light;
+    const humid = req.body.humidity;
     db.none('INSERT INTO private_settings(user_id,setting_name,temperature,water,light,humidity,last_updated) VALUES($1,$2,$3,$4,$5,$6,NOW())'
         ,[id,name,temperature,water,light,humid])
             .then(()=>{
@@ -119,8 +119,8 @@ function addNewSettings(req,res){
 }
 
 function uploadSettings(req,res){
-    const id = req.params.user_id;
-    const setting_id = req.params.setting_id;
+    const id = req.body.user_id;
+    const setting_id = req.body.setting_id;
     db.one('SELECT * FROM private WHERE user_id = $1,setting_id = $2',[id,setting_id])
         .then(x=>{
             db.none('INSERT INTO shared_settings(user_id,setting_name,temperature,water,light,humidity,last_updated) VALUES($1,$2,$3,$4,$5,$6,NOW())'
@@ -140,8 +140,8 @@ function testGetData2(req,res){
 }
 
 function testUploadData1(req,res){
-    const id = req.params.id;
-    const name = req.params.name;
+    const id = req.body.id;
+    const name = req.body.name;
     db.none('INSERT INTO tester1(id,name) VALUES($1,$2)',[id,name])
         .then(()=>{
             res.status(200).json({status:'success',message:'added'});
@@ -149,8 +149,8 @@ function testUploadData1(req,res){
 }
 
 function testUploadData2(req,res){
-    const id = req.params.id;
-    const name = req.params.name;
+    const id = req.body.id;
+    const name = req.body.name;
     db.none('INSERT INTO tester2(id,name) VALUES($1,$2)',[id,name])
         .then(()=>{
             res.status(200).json({status:'success',message:'added'});
