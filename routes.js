@@ -20,6 +20,9 @@ app.get('/browse/settings-g',Q.getGeneralSettings); // get list of all shared SE
 app.get('/settings-p',Q.getPrivateSettings); // get all private SETTINGS //
 app.post('/settings-p',Q.addNewSettings); // add a saved SETTINGS //
 app.post('/settings-p/upload',Q.uploadSettings); //
+app.post('/profile/create',Q.uploadProfile);
+app.get('/profile/info2',Q.getProfile);
+app.post('/profile/update',Q.updateProfile);
 
 app.post('/test-post-data1/:id/:name',Q.testUploadData1);
 app.post('/test-post-data2/:id/:name',Q.testUploadData2);

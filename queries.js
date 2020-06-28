@@ -133,6 +133,39 @@ function uploadSettings(req,res){
         });
 }
 
+function uploadProfile(req,res){
+    const id = req.body.id;
+    const bio = req.body.bio;
+    const image = req.body.image;
+    if(bio.length>10485760){
+        res.status(500).json({status:'Failed',message:'Bio too long'});
+    }
+    else{
+        db.none('INSERT INTO profiles(user_id,bio,picture_url) VALUES($1,$2,$3)',[id,bio,image])
+            .then(()=>{
+                res.status(200).json({status:'Successful',message:'Profile Created'});
+            });
+    }
+}
+
+function getProfile(req,res){
+    const id = req.body.id;
+    db.one('SELECT * FROM profiles WHERE user_id = $1',[id])
+        .then(x=>{
+            res.send(x);
+        });
+}
+
+function updateProfile(req,res){
+    const id = req.body.id;
+    const bio = req.body.bio;
+    const image = req.body.image;
+    db.none('UPDATE profiles WHERE user_id = $1 SET bio = $2, picture_url = $3',[id,bio,image])
+        .then(()=>{
+            res.status(200).json({status:'Successful',message:'Updated User Profile!'});
+        });
+}
+
 ////////////////////////////////////////// UNIT TESTING FUNCTIONS //////////////////////////////////////////
 
 function testGetData1(req,res){
@@ -197,6 +230,9 @@ module.exports = {
     uploadSettings: uploadSettings,
     testGetData1: testGetData1,
     testGetData2: testGetData2,
+    uploadProfile: uploadProfile,
+    getProfile: getProfile,
+    updateProfile: updateProfile,
     testUploadData1: testUploadData1,
     testUploadData2: testUploadData2,
     testUpdateData: testUpdateData,
