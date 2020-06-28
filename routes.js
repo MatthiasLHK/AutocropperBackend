@@ -21,4 +21,9 @@ app.get('/settings-p/:user_id',Q.getPrivateSettings); // get all private SETTING
 app.post('/settings-p/:user_id/add/:name/:temperature/:water/:light/:humidity',Q.addNewSettings); // add a saved SETTINGS //
 app.post('/settings-p/:user_id/:setting_id/upload',Q.uploadSettings); //
 
+app.post('/test-post-data1',Q.testUploadData1);
+app.post('/test-post-data2',Q.testUploadData2);
+app.get('/test-get-data1',Q.testGetData1);
+app.get('/test-get-data2',Q.testGetData2);
+
 module.exports = app;

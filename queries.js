@@ -131,6 +131,32 @@ function uploadSettings(req,res){
         });
 }
 
+function testGetData1(req,res){
+    db.manyOrNone('SELECT * FROM tester1').then(x=>{res.send(x)});
+}
+
+function testGetData2(req,res){
+    db.manyOrNone('SELECT * FROM tester2').then(x=>{res.send(x)});
+}
+
+function testUploadData1(req,res){
+    const id = req.params.id;
+    const name = req.params.name;
+    db.none('INSERT INTO tester1(id,name) VALUES($1,$2)',[id,name])
+        .then(()=>{
+            res.status(200).json({status:'success',message:'added'});
+        });
+}
+
+function testUploadData2(req,res){
+    const id = req.params.id;
+    const name = req.params.name;
+    db.none('INSERT INTO tester2(id,name) VALUES($1,$2)',[id,name])
+        .then(()=>{
+            res.status(200).json({status:'success',message:'added'});
+        });
+}
+
 module.exports = {
     getLoginAuth: getLoginAuth,
     createAccount: createAccount,
@@ -144,5 +170,9 @@ module.exports = {
     getGeneralSettings: getGeneralSettings,
     getPrivateSettings: getPrivateSettings,
     addNewSettings: addNewSettings,
-    uploadSettings: uploadSettings
+    uploadSettings: uploadSettings,
+    testGetData1: testGetData1,
+    testGetData2: testGetData2,
+    testUploadData1: testUploadData1,
+    testGetData2: testUploadData2
 };
