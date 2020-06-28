@@ -13,18 +13,20 @@ function createAccount(req,res){
         res.end('Password too long, 20 characters'); // need check again;
     }
     else{
-        db.none('INSERT INTO user_detail($1,$2,$3,NOW())',[user,pass,email])
+        db.none('INSERT INTO user_detail(username,password,email,created_on) VALUES($1,$2,$3,NOW())',[user,pass,email])
             .then(()=>{res.status(200).json({status:'Success',message:'Account Registered Successfully!'});})
-            .catch(e=>res.send('Username taken, $1',[e]));
+            .catch(e=>res.send('Username taken, $1',[e])); // change the catch, follow jonas edit
         // res.send(user+pass+email);
     }
 }
 
 function getLoginAuth(req,res){
-    db.manyOrNone('SELECT password FROM user_detail WHERE username = $1',[user])
+    const user = req.body.user;
+    const pass = req.body.pass;
+    db.one('SELECT password FROM user_detail WHERE username = $1',[user])
         .then(x=>{
                 const p = x.password;
-                if(p = pass){
+                if(p == pass){
                     res.status(200).json({status:'Success',message:'Login Successful'}); // insert here to rediect to homepage
                 }
                 else{
@@ -131,6 +133,8 @@ function uploadSettings(req,res){
         });
 }
 
+////////////////////////////////////////// UNIT TESTING FUNCTIONS //////////////////////////////////////////
+
 function testGetData1(req,res){
     db.manyOrNone('SELECT * FROM tester1').then(x=>{res.send(x)});
 }
@@ -140,21 +144,41 @@ function testGetData2(req,res){
 }
 
 function testUploadData1(req,res){
-    const id = req.body.id;
-    const name = req.body.name;
+    const id = req.params.id;
+    const name = req.params.name;
     db.none('INSERT INTO tester1(id,name) VALUES($1,$2)',[id,name])
         .then(()=>{
             res.status(200).json({status:'success',message:'added'});
-        });
+        }).catch(e=>{res.send(e)});
 }
 
 function testUploadData2(req,res){
-    const id = req.body.id;
-    const name = req.body.name;
+    const id = req.params.id;
+    const name = req.params.name;
     db.none('INSERT INTO tester2(id,name) VALUES($1,$2)',[id,name])
         .then(()=>{
             res.status(200).json({status:'success',message:'added'});
-        });
+        }).catch(e=>{res.send(e)});
+}
+
+function testUpdateData(req,res){
+    const id = req.params.id;
+    const name = req.params.name;
+    db.none('UPDATE tester1 SET name = $2 WHERE id = $1',[id,name])
+        .then(()=>{
+            res.status(200).json({status:'Success',message:'Successfully Updated Data'});
+        }).catch(x=>{res.send('Failed to update data');});
+}
+
+function testDeleteData(req,res){
+    const id = req.params.id;
+    db.none('DELETE FROM tester1 WHERE id = $1',[id])
+        .then(()=>{
+            res.status(200).json({status:'success',message:'Data Removed'});
+        })
+            .catch(x=>{
+                res.status(500).json({status:'failure',message:'Failed to Delete'});
+            });
 }
 
 module.exports = {
@@ -174,5 +198,8 @@ module.exports = {
     testGetData1: testGetData1,
     testGetData2: testGetData2,
     testUploadData1: testUploadData1,
-    testGetData2: testUploadData2
+    testUploadData2: testUploadData2,
+    testUpdateData: testUpdateData,
+    testDeleteData: testDeleteData
+
 };
