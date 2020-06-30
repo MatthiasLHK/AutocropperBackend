@@ -15,23 +15,22 @@ function createAccount(req,res){
     else{
         db.none('INSERT INTO user_detail(username,password,email,created_on) VALUES($1,$2,$3,NOW())',[user,pass,email])
             .then(()=>{res.status(200).json({status:'Success',message:'Account Registered Successfully!'});})
-            .catch(e=> res.send("failed")); // change the catch, follow jonas edit
+            .catch(e=>res.send('Username taken, $1',[e])); // change the catch, follow jonas edit
         // res.send(user+pass+email);
     }
 }
 
 function getLoginAuth(req,res){
-    const user = req.body.username;
-    const pass = req.body.password;
-    db.one('SELECT * FROM user_detail WHERE username = $1',[user])
+    const user = req.body.user;
+    const pass = req.body.pass;
+    db.one('SELECT password FROM user_detail WHERE username = $1',[user])
         .then(x=>{
                 const p = x.password;
-                const id = x.user_id;
                 if(p == pass){
-                    res.status(200).json({status:'Success',message:'Login Successful', user_id: {id}}); // insert here to rediect to homepage
+                    res.status(200).json({status:'Success',message:'Login Successful'}); // insert here to rediect to homepage
                 }
-                else {
-                    res.status(200).json({status:'Failed',message:'Failed to login'}); // clear password field
+                else{
+                    res.status(500).json({status:'Failed',message:'Failed to login'}); // clear password field
                 }
         });
 }
