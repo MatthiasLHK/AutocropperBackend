@@ -42,7 +42,7 @@ app.get('/connected_device/:device_id/set_settings/:setting_id',(req,res)=>{ // 
                                                                              // and change the url such that para is in the axios part in frontend
     const id = req.params.setting_id;
     const data = 0;
-    db.one('SELECT * FROM private_settings WHERE setting_id = $1',[id])
+    db.one('SELECT * FROM private_settings WHERE settings_id = $1',[id])
         .then(x=>{
             data = parseInt(x.temperature)*1000000 + parseInt(x.water*10000) + parseInt(x.light*100) + parseInt(x.humidity);
             res.send(data);
@@ -50,7 +50,7 @@ app.get('/connected_device/:device_id/set_settings/:setting_id',(req,res)=>{ // 
 });
 
 app.get('/connected_device/1001/set_settings',(req,res)=>{
-    res.send('44332211');
+    res.send('55224550');
 });
 
 // PORT
