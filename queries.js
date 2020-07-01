@@ -215,6 +215,21 @@ function testDeleteData(req,res){
             });
 }
 
+function hardware_connect(req,res){ // for testing, set device to be 1001
+                                    // and change the url such that para is in the axios part in frontend
+    const id = req.params.setting_id;
+    db.one('SELECT * FROM private_settings WHERE settings_id = $1',[id])
+        .then(x=>{
+            var data = 0;
+            data=parseInt(x.temperature)*1000000 + parseInt(x.water*10000) + parseInt(x.light*100) + parseInt(x.humidity);
+            data = data.toString();
+            res.send(data);
+        });
+}
+app.get('/connected_device/:device_id/set_settings/:setting_id',(req,res)=>{ // for testing, set device to be 1001
+                                                                             // and change the url such that para is in the axios part in frontend
+});
+
 module.exports = {
     getLoginAuth: getLoginAuth,
     createAccount: createAccount,
@@ -237,6 +252,7 @@ module.exports = {
     testUploadData1: testUploadData1,
     testUploadData2: testUploadData2,
     testUpdateData: testUpdateData,
-    testDeleteData: testDeleteData
+    testDeleteData: testDeleteData,
+    hardware_connect: hardware_connect
 
 };

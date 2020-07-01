@@ -30,5 +30,6 @@ app.get('/test-get-data1',Q.testGetData1);
 app.get('/test-get-data2',Q.testGetData2);
 app.post('/test-update/:id/:name',Q.testUpdateData);
 app.post('/test-delete/:id',Q.testDeleteData);
+app.get('/connected_device/:device_id/set_settings/:setting_id',Q.hardware_connect);
 
 module.exports = app;
