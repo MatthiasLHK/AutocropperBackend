@@ -226,9 +226,7 @@ function hardware_connect(req,res){ // for testing, set device to be 1001
             res.send(data);
         });
 }
-app.get('/connected_device/:device_id/set_settings/:setting_id',(req,res)=>{ // for testing, set device to be 1001
-                                                                             // and change the url such that para is in the axios part in frontend
-});
+
 
 module.exports = {
     getLoginAuth: getLoginAuth,
