@@ -72,7 +72,7 @@ function getTopRated(req,res){
 }
 
 function getNewPost(req,res){
-    db.manyOrNone('SELECT * FROM shared_settings ORDER BY last_updated DESC')
+    db.manyOrNone('SELECT user_id, setting_name, temperature, water, light, humidity FROM shared_settings ORDER BY last_updated DESC')
         .then(x=>{
             const result = [];
             for(var i=0; i<5; i++){
@@ -86,7 +86,7 @@ function getNewPost(req,res){
 function registerNewDevice(req,res){
     const id = req.body.user_id;
     const device = req.body.device_id;
-    db.none('INSERT INTO user_device(user_id,device_id,registered_on,power_on VALUES($1,$2,NOW(),FALSE)',[id,device])
+    db.none('INSERT INTO user_device(user_id,device_id,registered_on,power_on) VALUES($1,$2,NOW(),FALSE)',[id,device])
         .then(()=>{
             res.status(200).json({status:'Success',message:'Added new device'});
         });
@@ -130,22 +130,17 @@ function uploadSettings(req,res){
         });
 }
 
-function uploadProfile(req,res){
-    const id = req.body.id;
+function initialProfile(req,res){
+    const id = req.params.id;
     const name = "";
     const bio = "";
     const picture = "";
     const location = "";
     const company = "";
-    if(bio.length>10485760){
-        res.status(500).json({status:'Failed',message:'Bio too long'});
-    }
-    else{
         db.none('INSERT INTO profiles(user_id,name,user_bio,picture_url,location,company) VALUES($1,$2,$3,$4,$5,$6)',[id,name,bio,picture,location,company])
             .then(()=>{
-                res.status(200).json({status:'Successful',message:'Profile Created'});
-            });
-    }
+                res.status(200).json({status:'Success',message:'Initialise empty profile'});
+            }).catch(err=>{console.log(err)});
 }
 
 function getProfile(req,res){
@@ -157,16 +152,29 @@ function getProfile(req,res){
 }
 
 function updateProfile(req,res){
-    const id = req.body.id;
+    const id = req.params.id;
+    const name = req.body.name;
     const bio = req.body.bio;
-    const image = req.body.image;
-    db.none('UPDATE profiles WHERE user_id = $1 SET bio = $2, picture_url = $3',[id,bio,image])
-        .then(()=>{
-            res.status(200).json({status:'Successful',message:'Updated User Profile!'});
-        });
+    const picture = req.body.picture;
+    const location = req.body.location;
+    const company = req.body.company;
+    if(bio.length>10485760){
+        res.status(500).json({status:'Failed',message:'Bio too long'});
+    }
+    else{
+        db.none('update profiles set name = $2, user_bio = $3, picture_url = $4, location = $5, company = $6 where user_id = $1',
+        [id, name, bio, picture, location, company])
+            .then(()=>{
+                res.status(200).json({status:'Success',message:'profile updated'});
+            });
+    }
 }
 
-function ini
+function getUserDetails(req, res) {
+    const id = req.params.id;
+    db.manyOrNone('SELECT email FROM user_detail WHERE user_id = $1', [id])
+        .then(x => res.send(x));
+}
 
 ////////////////////////////////////////// UNIT TESTING FUNCTIONS //////////////////////////////////////////
 
@@ -228,6 +236,17 @@ function hardware_connect(req,res){ // for testing, set device to be 1001
         });
 }
 
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+///////////////////////////////////// JONAS TEST FUNCTIONS //////////////////////////////////////////////////////////////
+function updateData1(req,res){
+    const user = 1;
+    const name = "testing";
+    db.none('update tester1 set id = $1, name = $2 where id = 1' , [user, name]).then(x=>{res.send(200).json({
+        status: 'success',
+        message: 'updated'
+    })});
+}
 
 module.exports = {
     getLoginAuth: getLoginAuth,
@@ -237,20 +256,20 @@ module.exports = {
     getNewPost: getNewPost,
     getFullConnectedDevice: getFullConnectedDevice,
     registerNewDevice: registerNewDevice,
-    getFullConnectedDevice: getFullConnectedDevice,
     getGeneralSettings: getGeneralSettings,
     getPrivateSettings: getPrivateSettings,
     addNewSettings: addNewSettings,
     uploadSettings: uploadSettings,
     testGetData1: testGetData1,
     testGetData2: testGetData2,
-    uploadProfile: uploadProfile,
     getProfile: getProfile,
+    initialProfile: initialProfile,
     updateProfile: updateProfile,
+    getUserDetails: getUserDetails,
     testUploadData1: testUploadData1,
     testUploadData2: testUploadData2,
     testUpdateData: testUpdateData,
     testDeleteData: testDeleteData,
-    hardware_connect: hardware_connect
-
+    hardware_connect: hardware_connect,
+    updateData1: updateData1
 };
