@@ -21,7 +21,6 @@ app.get('/settings-p',Q.getPrivateSettings); // get all private SETTINGS //
 app.post('/settings-p',Q.addNewSettings); // add a saved SETTINGS //
 app.post('/settings-p/upload',Q.uploadSettings); //
 app.post('/profile-initial/:id', Q.initialProfile);
-app.get('/profile/info2',Q.getProfile);
 app.post('/profile-update/:id',Q.updateProfile);
 app.get('/getUserDetails/:id', Q.getUserDetails);
 
