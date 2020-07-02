@@ -72,7 +72,7 @@ function getTopRated(req,res){
 }
 
 function getNewPost(req,res){
-    db.manyOrNone('SELECT * FROM shared_settings ORDER BY last_updated_on DESC')
+    db.manyOrNone('SELECT * FROM shared_settings ORDER BY last_updated DESC')
         .then(x=>{
             const result = [];
             for(var i=0; i<5; i++){
@@ -82,10 +82,6 @@ function getNewPost(req,res){
         });
 }
 
-function getProfile(req,res){
-    const id = req.body.user_id;
-    db.one('SELECT * FROM user_detail WHERE user_id = $1',[id]).then(x=>res.send(x));
-}
 
 function registerNewDevice(req,res){
     const id = req.body.user_id;
@@ -136,13 +132,16 @@ function uploadSettings(req,res){
 
 function uploadProfile(req,res){
     const id = req.body.id;
-    const bio = req.body.bio;
-    const image = req.body.image;
+    const name = "";
+    const bio = "";
+    const picture = "";
+    const location = "";
+    const company = "";
     if(bio.length>10485760){
         res.status(500).json({status:'Failed',message:'Bio too long'});
     }
     else{
-        db.none('INSERT INTO profiles(user_id,bio,picture_url) VALUES($1,$2,$3)',[id,bio,image])
+        db.none('INSERT INTO profiles(user_id,name,user_bio,picture_url,location,company) VALUES($1,$2,$3,$4,$5,$6)',[id,name,bio,picture,location,company])
             .then(()=>{
                 res.status(200).json({status:'Successful',message:'Profile Created'});
             });
@@ -166,6 +165,8 @@ function updateProfile(req,res){
             res.status(200).json({status:'Successful',message:'Updated User Profile!'});
         });
 }
+
+function ini
 
 ////////////////////////////////////////// UNIT TESTING FUNCTIONS //////////////////////////////////////////
 
@@ -234,7 +235,6 @@ module.exports = {
     getConnectedDevice: getConnectedDevice,
     getTopRated: getTopRated,
     getNewPost: getNewPost,
-    getProfile: getProfile,
     getFullConnectedDevice: getFullConnectedDevice,
     registerNewDevice: registerNewDevice,
     getFullConnectedDevice: getFullConnectedDevice,
