@@ -257,7 +257,7 @@ function hardwareControlTest(req,res){
         res.send("light off")
     }
     else{ // humidity
-
+        res.send("");
     }
 }
 
