@@ -32,5 +32,6 @@ app.post('/test-update/:id/:name',Q.testUpdateData);
 app.post('/test-delete/:id',Q.testDeleteData);
 app.get('/connected_device/:device_id/set_settings/:setting_id',Q.hardware_connect);
 app.put('/update-data1',Q.updateData1);
+app.get('/hardware-control/:id',Q.hardwareControlTest);
 
 module.exports = app;

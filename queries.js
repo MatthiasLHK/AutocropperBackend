@@ -236,6 +236,31 @@ function hardware_connect(req,res){ // for testing, set device to be 1001
         });
 }
 
+function hardwareControlTest(req,res){
+    const id = req.params.id;
+    if(id == 1){ // temperature high
+        res.send("temp up")
+    }
+    else if(id == 2){ // temperature low
+        res.send("temp down")
+    }
+    else if(id == 3){ // water on
+        res.send("water on")
+    }
+    else if(id == 4){ // water off
+        res.send("water off")
+    }
+    else if(id == 5){ // light on
+        res.send("light on")
+    }
+    else if(id == 6){ // light off
+        res.send("light off")
+    }
+    else{ // humidity
+
+    }
+}
+
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 ///////////////////////////////////// JONAS TEST FUNCTIONS //////////////////////////////////////////////////////////////
@@ -271,5 +296,6 @@ module.exports = {
     testUpdateData: testUpdateData,
     testDeleteData: testDeleteData,
     hardware_connect: hardware_connect,
-    updateData1: updateData1
+    updateData1: updateData1,
+    hardwareControlTest: hardwareControlTest
 };
