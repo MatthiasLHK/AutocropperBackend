@@ -37,12 +37,12 @@ function getLoginAuth(req,res){
 }
 
 function getConnectedDevice(req,res){
-    const id = req.body.id;
+    const id = req.params.id;
     db.manyOrNone('SELECT pair_id, device_id, registered_on, power_on FROM user_device WHERE user_id = $1',[id]).then(x=>{res.send(x)});
 }
 
 function getFullConnectedDevice(req,res){
-    const id = req.body.id;
+    const id = req.params.id;
     db.manyOrNone('SELECT pair_id, device_id, registered_on, power_on FROM user_device WHERE user_id = id')
         .then(x=>{
             const device_ids = [];
@@ -98,7 +98,7 @@ function getGeneralSettings(req,res){
 }
 
 function getPrivateSettings(req,res){
-    const id = req.body.user_id;
+    const id = req.params.id;
     db.manyOrNone('SELECT * FROM private_settings WHERE user_id = $1',[id])
         .then(x=>{res.send(x);});
 }
@@ -144,7 +144,7 @@ function initialProfile(req,res){
 }
 
 function getProfile(req,res){
-    const id = req.body.id;
+    const id = req.params.id;
     db.one('SELECT * FROM profiles WHERE user_id = $1',[id])
         .then(x=>{
             res.send(x);

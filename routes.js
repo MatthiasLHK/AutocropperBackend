@@ -9,15 +9,15 @@ const Q = require("./queries");
 
 app.post('/login-Auth',Q.getLoginAuth); // login auth //
 app.post('/register',Q.createAccount); // register Account //
-app.get('/connected-devices-homepage',Q.getConnectedDevice); // get basic info on registered DEVICES //
+app.get('/connected-devices-homepage/:id',Q.getConnectedDevice); // get basic info on registered DEVICES //
 app.get('/top-5-rated',Q.getTopRated); // get info on the top 5 SETTINGS //
 app.get('/newly-posted',Q.getNewPost); // get info on the 5 newest SETTINGS //
 app.get('/getProfile/:id',Q.getProfile); // get profile info //
-app.get('/profile/connected-devices-profile',Q.getFullConnectedDevice); // get full info on registered DEVICES //
+app.get('/profile/connected-devices-profile/:id',Q.getFullConnectedDevice); // get full info on registered DEVICES //
 app.post('/profile/register-new-device',Q.registerNewDevice); // add new device to Account //
-app.get('/devices/active',Q.getFullConnectedDevice);
+app.get('/devices/active/:id',Q.getFullConnectedDevice);
 app.get('/browse/settings-g',Q.getGeneralSettings); // get list of all shared SETTINGS //
-app.get('/settings-p',Q.getPrivateSettings); // get all private SETTINGS //
+app.get('/settings-p/:id',Q.getPrivateSettings); // get all private SETTINGS //
 app.post('/settings-p',Q.addNewSettings); // add a saved SETTINGS //
 app.post('/settings-p/upload',Q.uploadSettings); //
 app.post('/profile-initial/:id', Q.initialProfile);
