@@ -236,29 +236,42 @@ function hardware_connect(req,res){ // for testing, set device to be 1001
         });
 }
 
+// function hardwareControlTest(req,res){
+//     const id = req.body.id;
+//     if(id == 1){ // temperature high
+//         res.send("temp up")
+//     }
+//     else if(id == 2){ // temperature low
+//         res.send("temp down")
+//     }
+//     else if(id == 3){ // water on
+//         res.send("water on")
+//     }
+//     else if(id == 4){ // water off
+//         res.send("water off")
+//     }
+//     else if(id == 5){ // light on
+//         res.send("light on")
+//     }
+//     else if(id == 6){ // light off
+//         res.send("light off")
+//     }
+//     else{ // humidity
+//         res.send("");
+//     }
+// }
+
 function hardwareControlTest(req,res){
-    const id = req.params.id;
-    if(id == 1){ // temperature high
-        res.send("temp up")
-    }
-    else if(id == 2){ // temperature low
-        res.send("temp down")
-    }
-    else if(id == 3){ // water on
-        res.send("water on")
-    }
-    else if(id == 4){ // water off
-        res.send("water off")
-    }
-    else if(id == 5){ // light on
-        res.send("light on")
-    }
-    else if(id == 6){ // light off
-        res.send("light off")
-    }
-    else{ // humidity
-        res.send("");
-    }
+    const id = req.body.id;
+    db.none("UPDATE hardware SET code = $1 WHERE id = 1",[id]).then(()=>{res.status(200).json({status:'Success'});});
+}
+
+function hardwareCodeTest(req,res){
+    db.one('SELECT code FROM hardware WHERE id = 1')
+        .then(x=>{
+            console.log(x.code);
+            res.send(x.code.toString());
+        });
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -297,5 +310,6 @@ module.exports = {
     testDeleteData: testDeleteData,
     hardware_connect: hardware_connect,
     updateData1: updateData1,
-    hardwareControlTest: hardwareControlTest
+    hardwareControlTest: hardwareControlTest,
+    hardwareCodeTest: hardwareCodeTest
 };
