@@ -23,6 +23,10 @@ app.post('/settings-p/upload',Q.uploadSettings); //
 app.post('/profile-initial/:id', Q.initialProfile);
 app.post('/profile-update/:id',Q.updateProfile);
 app.get('/getUserDetails/:id', Q.getUserDetails);
+app.get('/browse-user-settings/:user', Q.browseUserSettings);
+app.get('/browse-user-profile/:user', Q.browseUserProfile);
+app.get('/browse-user-details/:user', Q.browseUserDetails);
+app.put('/update-comment/:settings_id', Q.updateComment);
 
 app.post('/test-post-data1/:id/:name',Q.testUploadData1);
 app.post('/test-post-data2/:id/:name',Q.testUploadData2);
@@ -32,6 +36,7 @@ app.post('/test-update/:id/:name',Q.testUpdateData);
 app.post('/test-delete/:id',Q.testDeleteData);
 app.get('/connected_device/:device_id/set_settings/:setting_id',Q.hardware_connect);
 app.put('/update-data1',Q.updateData1);
-app.get('/hardware-control/:id',Q.hardwareControlTest);
+app.post('/hardware-control',Q.hardwareControlTest);
+app.get('/hardware-control-code', Q.hardwareCodeTest);
 
 module.exports = app;

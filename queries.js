@@ -110,8 +110,9 @@ function addNewSettings(req,res){
     const water = req.body.water;
     const light = req.body.light;
     const humid = req.body.humidity;
-    db.none('INSERT INTO private_settings(user_id,setting_name,temperature,water,light,humidity,last_updated) VALUES($1,$2,$3,$4,$5,$6,NOW())'
-        ,[id,name,temperature,water,light,humid])
+    const comment = req.body.comment;
+    db.none('INSERT INTO private_settings(user_id,setting_name,temperature,water,light,humidity,last_updated, comments, edited_on) VALUES($1,$2,$3,$4,$5,$6,NOW(), $7, NOW())'
+        ,[id,name,temperature,water,light,humid, comment])
             .then(()=>{
                 res.status(200).json({status:'Success',message:'Settings Saved'});
             });
@@ -143,12 +144,22 @@ function initialProfile(req,res){
             }).catch(err=>{console.log(err)});
 }
 
+function updateComment(req, res) {
+    const id = req.params.settings_id;
+    const comment = req.body.comments;
+    db.none('UPDATE private_settings SET comments = $1 WHERE settings_id = $2', [comment, id])
+        .then(() => {
+            res.status(200).json({status: 'Success', message: "Updated Comments"});
+        }).catch(err => console.log(err))
+}
+
 function getProfile(req,res){
     const id = req.params.id;
     db.one('SELECT * FROM profiles WHERE user_id = $1',[id])
         .then(x=>{
             res.send(x);
-        });
+        })
+        .catch(err => res.send('failed'));
 }
 
 function updateProfile(req,res){
@@ -173,7 +184,50 @@ function updateProfile(req,res){
 function getUserDetails(req, res) {
     const id = req.params.id;
     db.manyOrNone('SELECT email FROM user_detail WHERE user_id = $1', [id])
-        .then(x => res.send(x));
+        .then(x => res.send(x))
+}
+
+function browseUserSettings(req, res) {
+    const user = req.params.user;
+    db.manyOrNone('SELECT user_id FROM user_detail WHERE username = $1', [user])
+        .then(x => {
+            const id = x[0].user_id;
+            db.manyOrNone('SELECT * FROM shared_settings WHERE user_id = $1', [id])
+                .then(data => {
+                    res.send(data);
+                })
+                .catch(err => res.send("no settings"))
+        })
+        .catch(err => res.send("failed"))
+}
+
+function browseUserProfile(req, res) {
+    const user = req.params.user;
+    db.manyOrNone('SELECT user_id FROM user_detail WHERE username = $1', [user])
+        .then(x => {
+            const id = x[0].user_id;
+            db.manyOrNone('SELECT name, user_bio, picture_url, location, company FROM profiles WHERE user_id = $1', [id])
+                .then(data => {
+                    res.send(data)
+                })
+                .catch(err => res.send("no profile"))
+        })
+        .catch(err => res.send("failed"))
+}
+
+function browseUserDetails(req, res) {
+    const user = req.params.user;
+    db.manyOrNone('SELECT user_id FROM user_detail WHERE username = $1', [user])
+        .then( x=> {
+            console.log(x);
+            const id = x[0].user_id;
+            db.manyOrNone('SELECT username, email FROM user_detail WHERE user_id = $1', [id])
+                 .then(data => {
+                     res.send(data)
+                 })
+
+        })
+        .catch(err => res.send("failed"))
 }
 
 ////////////////////////////////////////// UNIT TESTING FUNCTIONS //////////////////////////////////////////
@@ -237,29 +291,20 @@ function hardware_connect(req,res){ // for testing, set device to be 1001
 }
 
 function hardwareControlTest(req,res){
-    const id = req.params.id;
-    if(id == 1){ // temperature high
-        res.send("temp up")
-    }
-    else if(id == 2){ // temperature low
-        res.send("temp down")
-    }
-    else if(id == 3){ // water on
-        res.send("water on")
-    }
-    else if(id == 4){ // water off
-        res.send("water off")
-    }
-    else if(id == 5){ // light on
-        res.send("light on")
-    }
-    else if(id == 6){ // light off
-        res.send("light off")
-    }
-    else{ // humidity
-        res.send("");
-    }
+    const id = req.body.id;
+    db.none("UPDATE hardware SET code = $1 WHERE id = 1", [id])
+        .then(() => {
+            {res.status(200).json({status: 'Success'})}
+        })
 }
+
+function hardwareCodeTest(req, res) {
+    db.one('SELECT code FROM hardware WHERE id = 1')
+        .then(x => {
+            res.send(x.code);
+        })
+}
+
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -297,5 +342,10 @@ module.exports = {
     testDeleteData: testDeleteData,
     hardware_connect: hardware_connect,
     updateData1: updateData1,
-    hardwareControlTest: hardwareControlTest
+    hardwareControlTest: hardwareControlTest,
+    hardwareCodeTest: hardwareCodeTest,
+    browseUserSettings: browseUserSettings,
+    browseUserProfile: browseUserProfile,
+    browseUserDetails: browseUserDetails,
+    updateComment: updateComment
 };
