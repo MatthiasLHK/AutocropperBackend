@@ -23,6 +23,11 @@ app.post('/settings-p/upload',Q.uploadSettings); //
 app.post('/profile-initial/:id', Q.initialProfile);
 app.post('/profile-update/:id',Q.updateProfile);
 app.get('/getUserDetails/:id', Q.getUserDetails);
+app.get('/browse-user-settings/:user', Q.browseUserSettings);
+app.get('/browse-user-profile/:user', Q.browseUserProfile);
+app.get('/browse-user-details/:user', Q.browseUserDetails);
+app.put('/update-comment/:settings_id', Q.updateComment);
+app.post('/push-to-device',Q.sendDevice);
 
 app.post('/test-post-data1/:id/:name',Q.testUploadData1);
 app.post('/test-post-data2/:id/:name',Q.testUploadData2);
