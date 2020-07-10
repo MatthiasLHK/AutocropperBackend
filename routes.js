@@ -28,6 +28,7 @@ app.get('/browse-user-profile/:user', Q.browseUserProfile);
 app.get('/browse-user-details/:user', Q.browseUserDetails);
 app.put('/update-comment/:settings_id', Q.updateComment);
 app.post('/push-to-device',Q.sendDevice);
+app.post('/un-upload',Q.removeUpload);
 
 app.post('/test-post-data1/:id/:name',Q.testUploadData1);
 app.post('/test-post-data2/:id/:name',Q.testUploadData2);
@@ -39,5 +40,7 @@ app.get('/connected_device/:device_id/set_settings/:setting_id',Q.hardware_conne
 app.put('/update-data1',Q.updateData1);
 app.post('/hardware-control',Q.hardwareControlTest);
 app.get('/hardware-control-code',Q.hardwareCodeTest);
+
+app.get('/testing-site',Q.testingCode);
 
 module.exports = app;

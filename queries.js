@@ -145,17 +145,17 @@ function addNewSettings(req,res){
 }
 
 function uploadSettings(req,res){
-    const id = req.body.user_id;
-    const setting = req.body.setting;
-    db.none('UPDATE private_settings SET shared = true WHERE user_id = $1,setting_name = $2',[id,setting]);
-    db.one('SELECT * FROM private_settings WHERE user_id = $1,setting_name = $2',[id,setting])
+    const setting = req.body.setting_id;
+    db.none('UPDATE private_settings SET shared = true WHERE settings_id = $1',[setting]);
+    db.one('SELECT * FROM private_settings WHERE settings_id = $1',[setting])
         .then(x=>{
-            db.none('INSERT INTO shared_settings(user_id,setting_name,temperature,water,light,humidity,last_updated,rating,comments,edited_on) VALUES($1,$2,$3,$4,$5,$6,NOW(),0,$7,NOW())'
-                ,[x.user_id,x.setting_id,x.temperature,x.water,x.light,x.humidity,x.comments])
+            db.none('INSERT INTO shared_settings(settings_id,user_id,setting_name,temperature,water,light,humidity,last_updated,rating,comments,edited_on) VALUES($1,$2,$3,$4,$5,$6,$7,NOW(),0,$8,NOW())'
+                ,[setting,x.user_id,x.setting_name,x.temperature,x.water,x.light,x.humidity,x.comments])
                     .then(()=>{
                         res.status(200).json({status:'Success',message:'Settings Uploaded'});
-                    });
-        });
+                    }).catch(err=>{console.log(err);});
+        })
+            .catch(err=>{console.log(err);});
 }
 
 function initialProfile(req,res){
@@ -272,7 +272,60 @@ function sendDevice(req,res){
         .catch(err=>{res.status(500).json({status:'Failed',message:'Failed to upload(1)'});});
 }
 
-////////////////////////////////////////// UNIT TESTING FUNCTIONS //////////////////////////////////////////
+function removeUpload(req,res){
+    const id = req.body.id;
+    db.none('DELETE FROM shared_settings WHERE settings_id = $1',[id])
+        .then(res.status(200).json({status:'success'}))
+            .catch(err=>{res.status(500).json({status:'failed'});});
+}
+
+///////////////////////////////////////// HARDWARE PART //////////////////////////////////////////
+
+function hardware_connect(req,res){ // for testing, set device to be 1001
+                                    // and change the url such that para is in the axios part in frontend
+    const id = req.params.device_id;
+    db.one('SELECT * FROM devices WHERE device_id = $1',[id])
+        .then(x=>{
+            var data = 0;
+            data=parseInt(x.temperature)*1000000 + parseInt(x.water*10000) + parseInt(x.light*100) + parseInt(x.humidity);
+            data = data.toString();
+            res.send(data);
+        });
+}
+
+function hardwareControlTest(req,res){
+    const id = req.body.id;
+    db.none("UPDATE hardware SET code = $1 WHERE id = 1",[id])
+        .then(()=>{res.status(200).json({status:'Success'});});
+}
+
+function hardwareCodeTest(req,res){
+    db.one('SELECT code FROM hardware WHERE id = 1')
+        .then(x=>{
+            // console.log(x.code);
+            res.send(x.code.toString());
+        });
+}
+
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+
+//////////////////////////////////////// TESTING FUNCTIONS /////////////////////////////////////////////////////
+function testingCode(req,res){
+    console.log("Starting Test code!");
+    // const id = req.params.id;
+    var test = [];
+    function help(x){
+        return db.manyOrNone('SELECT * FROM user_detail WHERE user_id = $1',[x]);
+    }
+    const t = [1,3,4];
+    t.forEach(x=>{
+        test.push(new Promise((resolve,reject)=>{resolve(help(x));}));
+    });
+    console.log(test);
+    Promise.all(test).then(x=>{console.log(x);});
+}
 
 function testGetData1(req,res){
     db.manyOrNone('SELECT * FROM tester1').then(x=>{res.send(x)});
@@ -320,34 +373,8 @@ function testDeleteData(req,res){
             });
 }
 
-function hardware_connect(req,res){ // for testing, set device to be 1001
-                                    // and change the url such that para is in the axios part in frontend
-    const id = req.params.device_id;
-    db.one('SELECT * FROM devices WHERE device_id = $1',[id])
-        .then(x=>{
-            var data = 0;
-            data=parseInt(x.temperature)*1000000 + parseInt(x.water*10000) + parseInt(x.light*100) + parseInt(x.humidity);
-            data = data.toString();
-            res.send(data);
-        });
-}
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-function hardwareControlTest(req,res){
-    const id = req.body.id;
-    db.none("UPDATE hardware SET code = $1 WHERE id = 1",[id])
-        .then(()=>{res.status(200).json({status:'Success'});});
-}
-
-function hardwareCodeTest(req,res){
-    db.one('SELECT code FROM hardware WHERE id = 1')
-        .then(x=>{
-            // console.log(x.code);
-            res.send(x.code.toString());
-        });
-}
-
-
-/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 ///////////////////////////////////// JONAS TEST FUNCTIONS //////////////////////////////////////////////////////////////
 function updateData1(req,res){
@@ -389,5 +416,7 @@ module.exports = {
     browseUserProfile: browseUserProfile,
     browseUserDetails: browseUserDetails,
     updateComment: updateComment,
-    sendDevice: sendDevice
+    sendDevice: sendDevice,
+    testingCode: testingCode,
+    removeUpload: removeUpload
 };
