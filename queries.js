@@ -42,8 +42,8 @@ function getConnectedDevice(req,res){
 }
 
 function getFullConnectedDevice(req,res){
-    const id = req.params.id;
-    db.manyOrNone('SELECT pair_id, device_id, registered_on, power_on FROM user_device WHERE user_id = id')
+    const id = 93;
+    db.manyOrNone('SELECT pair_id, device_id, registered_on, power_on FROM user_device WHERE user_id = $1', [id])
         .then(x=>{
             const device_ids = [];
             x.forEach(row=>{
@@ -84,11 +84,14 @@ function getNewPost(req,res){
 
 
 function registerNewDevice(req,res){
-    const id = req.body.user_id;
+    const id = req.params.user_id;
     const device = req.body.device_id;
-    db.none('INSERT INTO user_device(user_id,device_id,registered_on,power_on) VALUES($1,$2,NOW(),FALSE)',[id,device])
-        .then(()=>{
-            res.status(200).json({status:'Success',message:'Added new device'});
+    db.none('INSERT INTO devices(device_id) VALUES($1)',[device])
+        .then(() => {
+            db.none('INSERT INTO user_device(user_id,device_id,registered_on,power_on) VALUES($1,$2,NOW(),FALSE)',[id,device])
+            .then(()=>{
+                res.status(200).json({status:'Success',message:'Added new device'});
+            });
         });
 }
 
@@ -119,16 +122,17 @@ function addNewSettings(req,res){
 }
 
 function uploadSettings(req,res){
-    const id = req.body.user_id;
-    const setting_id = req.body.setting_id;
-    db.one('SELECT * FROM private WHERE user_id = $1,setting_id = $2',[id,setting_id])
+    const setting = req.body.setting_id;
+    db.none('UPDATE private_settings SET shared = true WHERE settings_id = $1',[setting]);
+    db.one('SELECT * FROM private_settings WHERE settings_id = $1',[setting])
         .then(x=>{
-            db.none('INSERT INTO shared_settings(user_id,setting_name,temperature,water,light,humidity,last_updated) VALUES($1,$2,$3,$4,$5,$6,NOW())'
-                ,[x.user_id,x.setting_id,x.temperature,x.water,x.light,x.humidity])
+            db.none('INSERT INTO shared_settings(settings_id, user_id,setting_name,temperature,water,light,humidity,last_updated,rating,comments,edited_on) VALUES($1,$2,$3,$4,$5,$6,$7,NOW(),0,$8,NOW())'
+                ,[setting, x.user_id,x.setting_name,x.temperature,x.water,x.light,x.humidity,x.comments])
                     .then(()=>{
                         res.status(200).json({status:'Success',message:'Settings Uploaded'});
                     });
-        });
+        })
+        .catch(err => console.log(err))
 }
 
 function initialProfile(req,res){
@@ -147,9 +151,17 @@ function initialProfile(req,res){
 function updateComment(req, res) {
     const id = req.params.settings_id;
     const comment = req.body.comments;
+    const shared = req.body.shared;
     db.none('UPDATE private_settings SET comments = $1 WHERE settings_id = $2', [comment, id])
         .then(() => {
-            res.status(200).json({status: 'Success', message: "Updated Comments"});
+            if (shared) {
+                db.none('UPDATE shared_settings SET comments = $1 WHERE settings_id = $2', [comment, id])
+                    .then(() => {
+                        res.status(200).json({status: 'Success', message: "Updated Comments only in private and shared settings"});
+                    })
+            } else {
+                res.status(200).json({status: 'Success', message: "Updated Comments only in private settings"});
+            }
         }).catch(err => console.log(err))
 }
 
@@ -228,6 +240,30 @@ function browseUserDetails(req, res) {
 
         })
         .catch(err => res.send("failed"))
+}
+
+function sendDevice(req,res){
+    const name = req.body.name;
+    const id = req.body.id;
+    db.none('SELECT * FROM private_settings WHERE settings_id = $1',[id])
+        .then(x=>{
+            const t = x.temperature;
+            const w = x.water;
+            const l = x.light;
+            const h = x.humidity;
+            db.none('UPDATE devices SET temperature=$1, water=$2, light=$3, humidity=$4, edited_on=NOW() WHERE device_id = $5',[t,w,l,h,id])
+                .catch(err=>{res.status(500).json({status:'Failed',message:'Failed to upload(2)'});});
+        })
+        .catch(err=>{res.status(500).json({status:'Failed',message:'Failed to upload(1)'});});
+}
+
+function removeUpload(req, res) {
+    const id = req.body.id;
+    db.none('UPDATE private_settings SET shared = false WHERE settings_id = $1', [id]);
+    db.none('DELETE FROM shared_settings WHERE settings_id = $1',[id])
+            .then(res.status(200).json({status:'success'}))
+                .catch(err=>{res.status(500).json({status:'failed'});});
+
 }
 
 ////////////////////////////////////////// UNIT TESTING FUNCTIONS //////////////////////////////////////////
@@ -347,5 +383,7 @@ module.exports = {
     browseUserSettings: browseUserSettings,
     browseUserProfile: browseUserProfile,
     browseUserDetails: browseUserDetails,
-    updateComment: updateComment
+    updateComment: updateComment,
+    sendDevice: sendDevice,
+    removeUpload: removeUpload
 };

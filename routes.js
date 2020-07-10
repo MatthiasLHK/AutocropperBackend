@@ -14,7 +14,7 @@ app.get('/top-5-rated',Q.getTopRated); // get info on the top 5 SETTINGS //
 app.get('/newly-posted',Q.getNewPost); // get info on the 5 newest SETTINGS //
 app.get('/getProfile/:id',Q.getProfile); // get profile info //
 app.get('/profile/connected-devices-profile/:id',Q.getFullConnectedDevice); // get full info on registered DEVICES //
-app.post('/profile/register-new-device',Q.registerNewDevice); // add new device to Account //
+app.post('/register-new-device/:user_id',Q.registerNewDevice); // add new device to Account //
 app.get('/devices/active/:id',Q.getFullConnectedDevice);
 app.get('/browse/settings-g',Q.getGeneralSettings); // get list of all shared SETTINGS //
 app.get('/settings-p/:id',Q.getPrivateSettings); // get all private SETTINGS //
@@ -27,6 +27,8 @@ app.get('/browse-user-settings/:user', Q.browseUserSettings);
 app.get('/browse-user-profile/:user', Q.browseUserProfile);
 app.get('/browse-user-details/:user', Q.browseUserDetails);
 app.put('/update-comment/:settings_id', Q.updateComment);
+app.post('/push-to-device/',Q.sendDevice);
+app.post('/un-upload/', Q.removeUpload);
 
 app.post('/test-post-data1/:id/:name',Q.testUploadData1);
 app.post('/test-post-data2/:id/:name',Q.testUploadData2);
