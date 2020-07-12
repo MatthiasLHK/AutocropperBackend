@@ -151,18 +151,11 @@ function initialProfile(req,res){
 function updateComment(req, res) {
     const id = req.params.settings_id;
     const comment = req.body.comments;
-    const shared = req.body.shared;
     db.none('UPDATE private_settings SET comments = $1 WHERE settings_id = $2', [comment, id])
         .then(() => {
-            if (shared) {
-                db.none('UPDATE shared_settings SET comments = $1 WHERE settings_id = $2', [comment, id])
-                    .then(() => {
-                        res.status(200).json({status: 'Success', message: "Updated Comments only in private and shared settings"});
-                    })
-            } else {
-                res.status(200).json({status: 'Success', message: "Updated Comments only in private settings"});
-            }
-        }).catch(err => console.log(err))
+            res.status(200).json({status: 'Success', message: "Updated Comments only in private settings"});
+        })
+        .catch(err => console.log(err))
 }
 
 function getProfile(req,res){
