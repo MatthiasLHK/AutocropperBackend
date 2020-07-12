@@ -58,12 +58,11 @@ function getFullConnectedDevice(req,res){
     var info = [];
 
     function getInfo(x){
-        return db.multi('SELECT * FROM devices WHERE device_id = 1001;SELECT * FROM user_device WHERE device_id = 1001')
+        return db.multi('SELECT * FROM devices WHERE device_id = $1;SELECT * FROM user_device WHERE device_id = $1',[x])
             .then(data=>{
                 const x = data[0][0];
                 const y = data[1][0];
                 var temp = [];
-                // temp.push(x.device_id == null);
                 temp.push(x.device_id);
                 temp.push(x.setting_name);
                 temp.push(x.temperature);
@@ -75,18 +74,12 @@ function getFullConnectedDevice(req,res){
                 return temp;
             });
     }
-    function push(x){
-        x.forEach(y=>{
-            info.push(getInfo(y));
-        });
-        return info;
-    }
     Promise.resolve(getIDs(id))
         .then(x=>{
             x.forEach(id=>{
+                console.log(id);
                 info.push(getInfo(id));
             });
-            console.log(info);
             return info;
         })
         .then(x=>{
