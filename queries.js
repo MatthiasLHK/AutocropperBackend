@@ -42,7 +42,7 @@ function getConnectedDevice(req,res){
 }
 
 function getFullConnectedDevice(req,res){
-    const id = 93;
+    const id = req.params.id;
     db.manyOrNone('SELECT pair_id, device_id, registered_on, power_on FROM user_device WHERE user_id = $1', [id])
         .then(x=>{
             const device_ids = [];
