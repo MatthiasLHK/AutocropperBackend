@@ -63,7 +63,7 @@ function getFullConnectedDevice(req,res){
                 const x = data[0][0];
                 const y = data[1][0];
                 var temp = [];
-                temp.push(x.device_id == null);
+                // temp.push(x.device_id == null);
                 temp.push(x.device_id);
                 temp.push(x.setting_name);
                 temp.push(x.temperature);
