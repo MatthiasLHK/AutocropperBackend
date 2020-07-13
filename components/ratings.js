@@ -1,4 +1,4 @@
-const db = require('./database-module');
+const db = require('../database-module');
 
 function getTopRated(req,res){
     db.manyOrNone('SELECT * FROM shared_settings ORDER BY rating DESC')

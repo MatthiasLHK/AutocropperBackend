@@ -1,4 +1,4 @@
-const db = require('./database-module');
+const db = require('../database-module');
 
 //////////////////////////////////////// TESTING FUNCTIONS /////////////////////////////////////////////////////
 // function testingCode(req,res){

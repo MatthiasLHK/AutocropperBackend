@@ -1,4 +1,4 @@
-const db = require('./database-module');
+const db = require('../database-module');
 
 function getGeneralSettings(req,res){
     db.manyOrNone('SELECT * FROM shared_settings')

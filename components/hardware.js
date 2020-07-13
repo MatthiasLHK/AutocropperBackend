@@ -1,4 +1,4 @@
-const db = require('./database-module');
+const db = require('../database-module');
 
 ///////////////////////////////////////// HARDWARE PART //////////////////////////////////////////
 

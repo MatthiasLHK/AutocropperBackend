@@ -1,4 +1,4 @@
-const db = require('./database-module');
+const db = require('../database-module');
 
 function createAccount(req,res){
     const user = req.body.username;
@@ -36,3 +36,5 @@ module.exports = {
     createAccount: createAccount,
     getLoginAuth: getLoginAuth
 };
+// exports.createAccount=createAccount;
+// exports.getLoginAuth=getLoginAuth;
