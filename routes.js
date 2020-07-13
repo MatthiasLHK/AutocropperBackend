@@ -29,6 +29,8 @@ app.get('/browse-user-details/:user', Q.browseUserDetails);
 app.put('/update-comment/:settings_id', Q.updateComment);
 app.post('/push-to-device/',Q.sendDevice);
 app.post('/un-upload/', Q.removeUpload);
+app.put('/edit-settings/', Q.editSettings);
+app.put('/delete-settings/', Q.deleteSettings);
 
 app.post('/test-post-data1/:id/:name',Q.testUploadData1);
 app.post('/test-post-data2/:id/:name',Q.testUploadData2);

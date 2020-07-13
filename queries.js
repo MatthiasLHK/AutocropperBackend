@@ -43,20 +43,47 @@ function getConnectedDevice(req,res){
 
 function getFullConnectedDevice(req,res){
     const id = req.params.id;
-    db.manyOrNone('SELECT pair_id, device_id, registered_on, power_on FROM user_device WHERE user_id = $1', [id])
+    var ids = [];
+
+    function getIDs(x){
+        return db.manyOrNone('SELECT device_id FROM user_device WHERE user_id = $1',[x])
+            .then(x=>{
+                x.forEach(row=>{
+                    ids.push(row.device_id);
+                });
+                return ids;
+            });
+    }
+
+    var info = [];
+
+    function getInfo(x){
+        return db.multi('SELECT * FROM devices WHERE device_id = $1;SELECT * FROM user_device WHERE device_id = $1',[x])
+            .then(data=>{
+                const x = data[0][0];
+                const y = data[1][0];
+                var temp = [];
+                temp.push(x.device_id);
+                temp.push(x.setting_name);
+                temp.push(x.temperature);
+                temp.push(x.water);
+                temp.push(x.light);
+                temp.push(x.humidity);
+                temp.push(x.edited_on);
+                temp.push(y.power_on);
+                return temp;
+            });
+    }
+    Promise.resolve(getIDs(id))
         .then(x=>{
-            const device_ids = [];
-            x.forEach(row=>{
-                device_ids.push(row.device_id);
+            x.forEach(id=>{
+                console.log(id);
+                info.push(getInfo(id));
             });
-            const fullSettings = [];
-            device_ids.forEach(r=>{
-                db.one('SELECT * FROM devices WHERE device_id = $1',[r])
-                    .then(y=>{
-                        fullSettings.push(y);
-                    })
-                        .then(res.send(fullSettings));
-            });
+            return info;
+        })
+        .then(x=>{
+            Promise.all(x).then(y=>{res.send(y)});
         });
 }
 
@@ -259,6 +286,30 @@ function removeUpload(req, res) {
 
 }
 
+function editSettings(req,res) {
+    const settings_id = req.body.id;
+    const temperature = req.body.temperature;
+    const water = req.body.water;
+    const light = req.body.light;
+    const humidity = req.body.humidity;
+    const setting_name = req.body.setting_name;
+
+    db.none('UPDATE private_settings SET setting_name = $1, temperature = $2, water = $3, light = $4, humidity = $5, last_updated = NOW() WHERE settings_id = $6',
+        [setting_name, temperature, water, light, humidity, settings_id])
+        .then(() => {
+            res.status(200).json({status: 'Success', message: 'Settings Updated'})
+        })
+        .catch(err => console.log(err))
+}
+
+function deleteSettings(req, res) {
+    const settings_id = req.body.settings_id;
+    db.none('DELETE FROM private_settings WHERE settings_id = $1', [settings_id])
+        .then(() => res.status(200).json({status: 'Success', message: 'Settings Deleted'}))
+        .catch(err => console.log(err))
+
+}
+
 ////////////////////////////////////////// UNIT TESTING FUNCTIONS //////////////////////////////////////////
 
 function testGetData1(req,res){
@@ -378,5 +429,7 @@ module.exports = {
     browseUserDetails: browseUserDetails,
     updateComment: updateComment,
     sendDevice: sendDevice,
-    removeUpload: removeUpload
+    removeUpload: removeUpload,
+    editSettings: editSettings,
+    deleteSettings: deleteSettings
 };
