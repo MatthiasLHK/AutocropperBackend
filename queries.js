@@ -272,6 +272,8 @@ function browseUserDetails(req, res) {
 function sendDevice(req,res){
     const setting_id = req.body.setting_id;
     const device_id = req.body.device_id;
+    console.log(setting_id);
+    console.log(device_id);
     db.one('SELECT * FROM private_settings WHERE settings_id = $1',[setting_id])
         .then(x=>{
             // res.status(200).json(x);
@@ -279,10 +281,12 @@ function sendDevice(req,res){
             const w = x.water;
             const l = x.light;
             const h = x.humidity;
-            db.none('UPDATE devices SET temperature=$1, water=$2, light=$3, humidity=$4, edited_on=NOW() WHERE device_id = $5',[t,w,l,h,device_id])
+            const name = x.setting_name;
+            db.none('UPDATE devices SET temperature=$1, water=$2, light=$3, humidity=$4, edited_on=NOW(), setting_name=$5 WHERE device_id = $6',[t,w,l,h,name,device_id])
                 .catch(err=>{res.status(500).json({status:'Failed',message:'Failed to upload(2)'});});
         })
-        .catch(err=>{res.status(500).json({status:'Failed',message:'Failed to upload(1)'});});
+        // .catch(err=>{res.status(500).json({status:'Failed',message:'Failed to upload(1)'});});
+        .catch(err=>res.status(500).json(err));
 }
 
 function removeUpload(req,res){

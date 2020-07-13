@@ -8,7 +8,7 @@ const app = express();
 app.use(express.json());
 app.use(cors());
 
-const R = require("./routes");
+const R = require("./routes_2");
 
 app.use('/',R);
 
