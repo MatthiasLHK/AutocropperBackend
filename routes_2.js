@@ -24,8 +24,8 @@ app.get('/devices/active/:id',D.getFullConnectedDevice);
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 app.get('/top-5-rated',R.getTopRated); // get info on the top 5 SETTINGS //
 app.get('/newly-posted',R.getNewPost); // get info on the 5 newest SETTINGS //
-app.put('/upVote/:id',R.upVote);
-app.put('/downVote/:id',R.downVote);
+app.put('/upVote',R.upVote);
+app.put('/downVote',R.downVote);
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 app.get('/getProfile/:id',P.getProfile); // get profile info //
 app.post('/profile-initial/:id', P.initialProfile);

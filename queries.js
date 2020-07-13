@@ -297,6 +297,44 @@ function removeUpload(req,res){
             .catch(err=>{res.status(500).json({status:'failed'});});
 }
 
+function upVote(req,res){
+    const settings_id = req.body.id;
+    db.none('UPDATE shared_setings SET rating=rating+1 WHERE settings_id = $1',[setting_id])
+        .then(()=>res.status(200).json({status:'success'}))
+            .catch(err=>res.status(500).json({err}));
+}
+
+function downVote(req,res){
+    const settings_id = req.body.id;
+    db.none('UPDATE shared_setings SET rating=rating-1 WHERE settings_id = $1',[setting_id])
+        .then(()=>res.status(200).json({status:'success'}))
+            .catch(err=>res.status(500).json({err}));
+}
+
+function editSettings(req,res) {
+    const settings_id = req.body.id;
+    const temperature = req.body.temperature;
+    const water = req.body.water;
+    const light = req.body.light;
+    const humidity = req.body.humidity;
+    const setting_name = req.body.setting_name;
+
+    db.none('UPDATE private_settings SET setting_name = $1, temperature = $2, water = $3, light = $4, humidity = $5, last_updated = NOW() WHERE settings_id = $6',
+        [setting_name, temperature, water, light, humidity, settings_id])
+        .then(() => {
+            res.status(200).json({status: 'Success', message: 'Settings Updated'})
+        })
+        .catch(err => console.log(err))
+}
+
+function deleteSettings(req, res) {
+    const settings_id = req.body.settings_id;
+    db.none('DELETE FROM private_settings WHERE settings_id = $1', [settings_id])
+        .then(() => res.status(200).json({status: 'Success', message: 'Settings Deleted'}))
+        .catch(err => console.log(err))
+
+}
+
 ///////////////////////////////////////// HARDWARE PART //////////////////////////////////////////
 
 function hardware_connect(req,res){ // for testing, set device to be 1001
@@ -506,5 +544,9 @@ module.exports = {
     updateComment: updateComment,
     sendDevice: sendDevice,
     testingCode: testingCode,
-    removeUpload: removeUpload
+    removeUpload: removeUpload,
+    upVote: upVote,
+    downVote: downVote,
+    editSettings: editSettings,
+    deleteSettings: deleteSettings
 };
