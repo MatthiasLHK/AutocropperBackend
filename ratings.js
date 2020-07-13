@@ -24,9 +24,20 @@ function getNewPost(req,res){
 
 function upVote(req,res){
     const settings_id = req.params.id;
+    db.none('UPDATE shared_setings SET rating=rating+1 WHERE settings_id = $1',[setting_id])
+        .then(()=>res.status(200).json({status:'success'}))
+            .catch(err=>res.status(500).json({err}));
+}
 
+function downVote(req,res){
+    const settings_id = req.params.id;
+    db.none('UPDATE shared_setings SET rating=rating-1 WHERE settings_id = $1',[setting_id])
+        .then(()=>res.status(200).json({status:'success'}))
+            .catch(err=>res.status(500).json({err}));
 }
 module.exports = {
     getTopRated: getTopRated,
-    getNewPost: getNewPost
+    getNewPost: getNewPost,
+    upVote: upVote,
+    downVote: downVote
 };
