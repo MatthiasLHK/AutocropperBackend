@@ -270,8 +270,8 @@ function browseUserDetails(req, res) {
 }
 
 function sendDevice(req,res){
-    const setting_id = req.params.setting_id;
-    const device_id = req.params.device_id;
+    const setting_id = req.body.setting_id;
+    const device_id = req.body.device_id;
     db.one('SELECT * FROM private_settings WHERE settings_id = $1',[setting_id])
         .then(x=>{
             // res.status(200).json(x);
