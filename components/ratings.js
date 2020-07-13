@@ -24,14 +24,14 @@ function getNewPost(req,res){
 
 function upVote(req,res){
     const settings_id = req.body.id;
-    db.none('UPDATE shared_setings SET rating=rating+1 WHERE settings_id = $1',[setting_id])
+    db.none('UPDATE shared_settings SET rating=rating+1 WHERE settings_id = $1',[settings_id])
         .then(()=>res.status(200).json({status:'success'}))
             .catch(err=>res.status(500).json({err}));
 }
 
 function downVote(req,res){
     const settings_id = req.body.id;
-    db.none('UPDATE shared_setings SET rating=rating-1 WHERE settings_id = $1',[setting_id])
+    db.none('UPDATE shared_settings SET rating=rating-1 WHERE settings_id = $1',[setting_id])
         .then(()=>res.status(200).json({status:'success'}))
             .catch(err=>res.status(500).json({err}));
 }
