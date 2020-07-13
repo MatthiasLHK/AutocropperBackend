@@ -99,7 +99,7 @@ function getTopRated(req,res){
 }
 
 function getNewPost(req,res){
-    db.manyOrNone('SELECT user_id, setting_name, temperature, water, light, humidity FROM shared_settings ORDER BY last_updated DESC')
+    db.manyOrNone('SELECT user_id, setting_name, temperature, water, light, humidity, comments, rating FROM shared_settings ORDER BY last_updated DESC')
         .then(x=>{
             const result = [];
             for(var i=0; i<5; i++){
@@ -314,6 +314,13 @@ function deleteSettings(req, res) {
 
 }
 
+function upVote(req,res){
+    const settings_id = req.body.id;
+    db.none('UPDATE shared_settings SET rating=rating+1 WHERE settings_id = $1',[settings_id])
+        .then(()=>res.status(200).json({status:'success', message: "Rating increased"}))
+            .catch(err=>res.status(500).json({err}));
+}
+
 ////////////////////////////////////////// UNIT TESTING FUNCTIONS //////////////////////////////////////////
 
 function testGetData1(req,res){
@@ -435,5 +442,6 @@ module.exports = {
     sendDevice: sendDevice,
     removeUpload: removeUpload,
     editSettings: editSettings,
-    deleteSettings: deleteSettings
+    deleteSettings: deleteSettings,
+    upVote: upVote
 };

@@ -31,6 +31,7 @@ app.post('/push-to-device/',Q.sendDevice);
 app.post('/un-upload/', Q.removeUpload);
 app.put('/edit-settings/', Q.editSettings);
 app.put('/delete-settings/', Q.deleteSettings);
+app.put('/upVote', Q.upVote)
 
 app.post('/test-post-data1/:id/:name',Q.testUploadData1);
 app.post('/test-post-data2/:id/:name',Q.testUploadData2);
