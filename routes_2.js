@@ -5,13 +5,13 @@ const app = express();
 app.use(express.json());
 app.use(cors());
 
-const L = require("./loginPage");
-const D = require("./devices");
-const P = require("./profiles");
-const R = require("./ratings");
-const S = require("./settings");
-const T = require("./testing codes");
-const H = require("./hardware");
+const L = require("./components/loginPage");
+const D = require("./components/devices");
+const P = require("./components/profiles");
+const R = require("./components/ratings");
+const S = require("./components/settings");
+const T = require("./components/testing codes");
+const H = require("./components/hardware");
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 app.post('/login-Auth',L.getLoginAuth); // login auth //
 app.post('/register',L.createAccount); // register Account //
