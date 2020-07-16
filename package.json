@@ -12,6 +12,7 @@
     "cors": "^2.8.5",
     "express": "^4.17.1",
     "joi": "^14.3.1",
+    "nodemailer": "^6.4.10",
     "nodemon": "^2.0.4",
     "pg-promise": "^10.5.6"
   }

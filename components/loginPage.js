@@ -1,4 +1,5 @@
 const db = require('../database-module');
+const nodemailer = require("nodemailer");
 
 function createAccount(req,res){
     const user = req.body.username;
@@ -32,9 +33,44 @@ function getLoginAuth(req,res){
         });
 }
 
+async function emailAuth(email){
+    var transport = {
+        host: 'smtp.gmail.com', // e.g. smtp.gmail.com
+        auth: {
+            user: 'orbital.autocropper@gmail.com',
+            pass: 'Autocropper123'
+        }
+    }
+    var transporter = nodemailer.createTransport(transport);
+    transporter.verify((error, success) => {
+      if (error) {
+        console.log(error);
+      } else {
+        console.log('All works fine, congratz!');
+      }
+    });
+    var mail = {
+        from: 'orbital.autocropper@gmail.com',
+        to: email,
+        subject: 'Autocropper testing 1',
+
+        html: "Test message 1"
+    }
+
+    transporter.sendMail(mail,(err,data)=>{
+        if(err){
+            res.status(500).json({status:'Failed'});
+        }
+        else{
+            res.status(200).json({status:'Success'});
+        }
+    });
+}
+
 module.exports = {
     createAccount: createAccount,
-    getLoginAuth: getLoginAuth
+    getLoginAuth: getLoginAuth,
+    emailAuth: emailAuth
 };
 // exports.createAccount=createAccount;
 // exports.getLoginAuth=getLoginAuth;

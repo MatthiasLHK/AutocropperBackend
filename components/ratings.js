@@ -12,7 +12,7 @@ function getTopRated(req,res){
 }
 
 function getNewPost(req,res){
-    db.manyOrNone('SELECT user_id, setting_name, temperature, water, light, humidity FROM shared_settings ORDER BY last_updated DESC')
+    db.manyOrNone('SELECT * FROM shared_settings ORDER BY last_updated DESC')
         .then(x=>{
             const result = [];
             for(var i=0; i<5; i++){
@@ -35,6 +35,7 @@ function downVote(req,res){
         .then(()=>res.status(200).json({status:'success'}))
             .catch(err=>res.status(500).json({err}));
 }
+
 module.exports = {
     getTopRated: getTopRated,
     getNewPost: getNewPost,
