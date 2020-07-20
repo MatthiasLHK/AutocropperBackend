@@ -17,6 +17,7 @@ app.post('/login-Auth',L.getLoginAuth); // login auth //
 app.post('/register',L.createAccount); // register Account //
 app.post('/email',L.emailAuth);
 app.post('/test',L.test);
+app.get('/verify/:user_id/:authcode',L.verify);
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 app.get('/connected-devices-homepage/:id',D.getConnectedDevice); // get basic info on registered DEVICES //
 app.post('/push-to-device/',D.sendDevice);

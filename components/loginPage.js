@@ -1,5 +1,6 @@
 const db = require('../database-module');
 const nodemailer = require("nodemailer");
+const path = require('path');
 
 function createAccount(req,res){
     const user = req.body.username;
@@ -90,7 +91,8 @@ async function emailAuth(email,id){
         subject: 'Autocropper testing 1',
 
         // html: "Test message 1"
-        html: '<h1>AutoCropper Registration!</h1><p>Sir/Mdm:<br>Thank you for registering with AutoCroppers! Please proceed to verify your registration to start using your account!<br>Click here:<a href={link}>VERIFY</a></p>'
+        // html: <h1>AutoCropper Registration!</h1><p>Sir/Mdm:<br>Thank you for registering with AutoCroppers! Please proceed to verify your registration to start using your account!<br>Click here:<a href=link>VERIFY</a></p>
+        html: '<h1>AutoCropper Registration!</h1><p>Sir/Mdm:<br>Thank you for registering with AutoCroppers! Please proceed to verify your registration to start using your account!<br>Click here:<a href=link>VERIFY</a></p>'
     }
 
     transporter.sendMail(mail,(err,data)=>{
@@ -103,11 +105,6 @@ async function emailAuth(email,id){
     });
 }
 
-function test(req,res){
-    // linkMaker(1).then(x=>console.log(x)).catch(err=>console.log(err)); // link linkMaker
-    emailAuth("huankang1998@gmail.com").then(res.status(200).json({status:'Success'}));
-}
-
 async function linkMaker(id){
     // const data = await db.one('SELECT verified FROM user_detail WHERE user_id = $1',[id]);
     // const auth = data.verified;
@@ -118,10 +115,37 @@ async function linkMaker(id){
     return link;
 }
 
+async function verify(req,res){
+    const id = req.params.user_id;
+    const code = req.params.authcode;
+    const authcode = await db.one('SELECT authcode FROM user_detail WHERE user_id = $1',[id]);
+    if(code == authcode.authcode){
+        return db.none('UPDATE user_detail SET verified=true WHERE user_id = $1',[id])
+                .then(()=>{
+                    // var x = __dirname;
+                    // console.log(x);
+                    var x = path.join('C:'+'/Users'+'/dracu'+'/desktop'+'/real Backend'+'/verify.htm');
+                    console.log(x);
+                    res.sendFile(x);
+                    // res.status(200).json({status:'Success'});
+                });
+    }
+    else{
+        return res.status(500).json({status:'Failed'});
+    }
+}
+
+function test(req,res){
+    // linkMaker(1).then(x=>console.log(x)).catch(err=>console.log(err)); // link linkMaker
+    // emailAuth("huankang1998@gmail.com").then(res.status(200).json({status:'Success'}));
+    // verify(2,383239).then(x=>console.log(x));
+}
+
 module.exports = {
     createAccount: createAccount,
     getLoginAuth: getLoginAuth,
     emailAuth: emailAuth,
     linkMaker: linkMaker,
-    test: test
+    test: test,
+    verify: verify
 };
