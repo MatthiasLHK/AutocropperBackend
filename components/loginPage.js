@@ -128,14 +128,6 @@ async function verify(req,res){
     const authcode = await db.one('SELECT authcode FROM user_detail WHERE user_id = $1',[id]);
     if(code == authcode.authcode){
         return db.none('UPDATE user_detail SET verified=true WHERE user_id = $1',[id]);
-                // .then(()=>{
-                //     // var x = __dirname;
-                //     // console.log(x);
-                //     var x = path.join('C:'+'/Users'+'/dracu'+'/desktop'+'/real Backend'+'/verify.htm');
-                //     console.log(x);
-                //     res.sendFile(x);
-                //     // res.status(200).json({status:'Success'});
-                // });
     }
     else{
         return res.status(500).json({status:'Failed'});
