@@ -12,6 +12,7 @@ const R = require('./components/ratings');
 const S = require('./components/settings');
 const T = require('./components/testing codes');
 const H = require('./components/hardware');
+const Hash = require('./components/hashing');
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 app.post('/login-Auth',L.getLoginAuth); // login auth //
 app.post('/register',L.createAccount); // register Account //
@@ -59,6 +60,8 @@ app.get('/testing-site/:id',T.testingCode);
 app.get('/connected_device/:device_id/set_settings/:setting_id',H.hardware_connect);
 app.post('/hardware-control',H.hardwareControlTest);
 app.get('/hardware-control-code',H.hardwareCodeTest);
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+app.post('/hash',Hash.idMaker);
 
 
 module.exports = app;

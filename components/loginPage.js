@@ -1,17 +1,19 @@
 const db = require('../database-module');
 const nodemailer = require("nodemailer");
 const path = require('path');
+const hash = require('./hashing');
 
 function createAccount(req,res){
     const user = req.body.username;
     const pass = req.body.password;
     const email = req.body.email;
     const auth = Math.floor(Math.random()*1000000);
+    const id = hash.idMaker();
     if(pass.length>20){
         res.end('Password too long, 20 characters'); // need check again;
     }
     else{
-        db.none('INSERT INTO user_detail(username,password,email,created_on,authcode) VALUES($1,$2,$3,NOW(),$4)',[user,pass,email,auth])
+        db.none('INSERT INTO user_detail(user_id,username,password,email,created_on,authcode) VALUES($1,$2,$3,$4,NOW(),$5)',[id,user,pass,email,auth])
             .then(()=>{
                 db.one('SELECT user_id FROM user_detail WHERE username = $1',[user])
                     .then(x=>{
