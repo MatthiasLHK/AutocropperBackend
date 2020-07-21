@@ -93,8 +93,13 @@ async function emailAuth(email,id){
         subject: 'Autocropper testing 1',
 
         // html: "Test message 1"
-        // html: <h1>AutoCropper Registration!</h1><p>Sir/Mdm:<br>Thank you for registering with AutoCroppers! Please proceed to verify your registration to start using your account!<br>Click here:<a href=link>VERIFY</a></p>
-        html: '<h1>AutoCropper Registration!</h1><p>Sir/Mdm:<br>Thank you for registering with AutoCroppers! Please proceed to verify your registration to start using your account!<br>Click here:<a href=link>VERIFY</a></p>'
+        html: `<h1>AutoCropper Registration!</h1><p>Sir/Mdm:<br>Thank you for registering with AutoCroppers! Please proceed to verify your registration to start using your account!<br>Click here:<a href=${link}>VERIFY</a></p>`
+        // html: '<h1>AutoCropper Registration!</h1><p>Sir/Mdm:<br>Thank you for registering with AutoCroppers! Please proceed to verify your registration to start using your account!<br>Verify:{link}</p>'
+        // html: `<p>
+        //         <a id="a1" href=${link}>
+        //         test
+        //         </a>
+        //         </p>`
     }
 
     transporter.sendMail(mail,(err,data)=>{
@@ -112,25 +117,25 @@ async function linkMaker(id){
     // const auth = data.verified;
     const data = await db.one('SELECT authcode FROM user_detail WHERE user_id = $1',[id]);
     const auth = data.authcode;
-    var link = "frontend-url/verify/";
+    var link = "https://autocropperverify.herokuapp.com/";
     link = link+id+"/"+auth;
     return link;
 }
 
 async function verify(req,res){
-    const id = req.params.user_id;
-    const code = req.params.authcode;
+    const id = req.body.user_id;
+    const code = req.body.authcode;
     const authcode = await db.one('SELECT authcode FROM user_detail WHERE user_id = $1',[id]);
     if(code == authcode.authcode){
-        return db.none('UPDATE user_detail SET verified=true WHERE user_id = $1',[id])
-                .then(()=>{
-                    // var x = __dirname;
-                    // console.log(x);
-                    var x = path.join('C:'+'/Users'+'/dracu'+'/desktop'+'/real Backend'+'/verify.htm');
-                    console.log(x);
-                    res.sendFile(x);
-                    // res.status(200).json({status:'Success'});
-                });
+        return db.none('UPDATE user_detail SET verified=true WHERE user_id = $1',[id]);
+                // .then(()=>{
+                //     // var x = __dirname;
+                //     // console.log(x);
+                //     var x = path.join('C:'+'/Users'+'/dracu'+'/desktop'+'/real Backend'+'/verify.htm');
+                //     console.log(x);
+                //     res.sendFile(x);
+                //     // res.status(200).json({status:'Success'});
+                // });
     }
     else{
         return res.status(500).json({status:'Failed'});

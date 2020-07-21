@@ -4,7 +4,9 @@ function idMaker(){
     var code = "";
     for(i=0; i<10; i++){
         var ran = parseInt(Math.random()*(max-min)+min);
-        // console.log(ran);
+        if(ran == 60 || ran == 62){
+            ran = ran + 1;
+        }
         const d = String.fromCharCode(ran);
         code = code + d;
         // console.log(code);

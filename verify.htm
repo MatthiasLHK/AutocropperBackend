@@ -1,3 +1,9 @@
+function updateLink()
+{
+  value = document.getElementById('txt').value;
+  document.getElementById('link').href = 'something.com?name='+value;
+}
+
 <!DOCTYPE html>
 <html>
 <body>
@@ -5,7 +11,12 @@
 <h1>Thank you for verifying!</h1>
 
 <p>Please proceed back to login page!</p>
-<meta http-equiv = "refresh" content = "3; url = https://www.qries.com" />
+<form>
+      <a id='link' href="">
+      <textarea id="txt" rows="3" columns="8" name="val" onChange="updateLink()"></textarea>
+</form>
+
+<!-- <meta http-equiv = "refresh" content = "3; url = https://www.qries.com" /> -->
 
 </body>
 </html>
