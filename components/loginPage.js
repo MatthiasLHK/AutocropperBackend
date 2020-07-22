@@ -93,7 +93,7 @@ async function emailAuth(email,id){
         subject: 'Autocropper testing 1',
 
         // html: "Test message 1"
-        html: `<h1>AutoCropper Registration!</h1><p>Sir/Mdm:<br>Thank you for registering with AutoCroppers! Please proceed to verify your registration to start using your account!<br>Click here:<a href=${link}>VERIFY</a></p>`
+        html: `<h1>AutoCropper Registration!</h1><p>Sir/Mdm:<br>Thank you for registering with AutoCroppers! Please proceed to verify your registration to start using your account!<br>Click here:<a href=${link}>${link}</a></p>`
         // html: '<h1>AutoCropper Registration!</h1><p>Sir/Mdm:<br>Thank you for registering with AutoCroppers! Please proceed to verify your registration to start using your account!<br>Verify:{link}</p>'
         // html: `<p>
         //         <a id="a1" href=${link}>
