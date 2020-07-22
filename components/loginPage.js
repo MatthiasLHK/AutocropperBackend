@@ -70,6 +70,7 @@ async function emailAuth(email,id){
     console.log(email);
     console.log(id);
     const link = await linkMaker(id);
+    // const link = "ABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^&*";
     // const link = "https://www.youtube.com/watch?v=scsRp6qgyoY&t=415s";
     console.log(link);
     var transport = {
@@ -93,13 +94,8 @@ async function emailAuth(email,id){
         subject: 'Autocropper testing 1',
 
         // html: "Test message 1"
-        html: `<h1>AutoCropper Registration!</h1><p>Sir/Mdm:<br>Thank you for registering with AutoCroppers! Please proceed to verify your registration to start using your account!<br>Click here:<a href=${link}>${link}</a></p>`
+        html: `<h1>AutoCropper Registration!</h1><p>Sir/Mdm:<br>Thank you for registering with AutoCroppers! Please proceed to verify your registration to start using your account!<br>Click here:<a href=${link}>VERIFY</a></p>`
         // html: '<h1>AutoCropper Registration!</h1><p>Sir/Mdm:<br>Thank you for registering with AutoCroppers! Please proceed to verify your registration to start using your account!<br>Verify:{link}</p>'
-        // html: `<p>
-        //         <a id="a1" href=${link}>
-        //         test
-        //         </a>
-        //         </p>`
     }
 
     transporter.sendMail(mail,(err,data)=>{
@@ -113,11 +109,10 @@ async function emailAuth(email,id){
 }
 
 async function linkMaker(id){
-    // const data = await db.one('SELECT verified FROM user_detail WHERE user_id = $1',[id]);
-    // const auth = data.verified;
     const data = await db.one('SELECT authcode FROM user_detail WHERE user_id = $1',[id]);
     const auth = data.authcode;
-    var link = "https://autocropperverify.herokuapp.com/";
+    // var link = "https://autocropperverify.herokuapp.com/";
+    var link = "https://localhost:3000/";
     link = link+id+"/"+auth;
     return link;
 }
@@ -125,6 +120,8 @@ async function linkMaker(id){
 async function verify(req,res){
     const id = req.body.user_id;
     const code = req.body.authcode;
+    console.log(id);
+    console.log(code);
     const authcode = await db.one('SELECT authcode FROM user_detail WHERE user_id = $1',[id]);
     if(code == authcode.authcode){
         return db.none('UPDATE user_detail SET verified=true WHERE user_id = $1',[id]);
