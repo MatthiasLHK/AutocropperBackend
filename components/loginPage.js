@@ -111,8 +111,8 @@ async function emailAuth(email,id){
 async function linkMaker(id){
     const data = await db.one('SELECT authcode FROM user_detail WHERE user_id = $1',[id]);
     const auth = data.authcode;
-    // var link = "https://autocropperverify.herokuapp.com/";
-    var link = "https://localhost:3000/";
+    var link = "https://autocropperverify.herokuapp.com/";
+    // var link = "https://localhost:3000/";
     link = link+id+"/"+auth;
     return link;
 }
