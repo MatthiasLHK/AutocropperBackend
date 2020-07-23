@@ -62,6 +62,7 @@ app.post('/hardware-control',H.hardwareControlTest);
 app.get('/hardware-control-code',H.hardwareCodeTest);
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 app.post('/hash',Hash.idMaker);
+app.get('/hashing/:password',Hash.test);
 
 
 module.exports = app;
