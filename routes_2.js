@@ -23,7 +23,7 @@ app.post('/verify',L.verify);
 app.get('/connected-devices-homepage/:id',D.getConnectedDevice); // get basic info on registered DEVICES //
 app.post('/push-to-device/',D.sendDevice);
 app.get('/profile/connected-devices-profile/:id',D.getFullConnectedDevice); // get full info on registered DEVICES //
-app.post('/profile/register-new-device/:user_id',D.registerNewDevice); // add new device to Account //
+app.post('/register-new-device/:user_id',D.registerNewDevice); // add new device to Account //
 app.get('/devices/active/:id',D.getFullConnectedDevice);
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 app.get('/top-5-rated',R.getTopRated); // get info on the top 5 SETTINGS //

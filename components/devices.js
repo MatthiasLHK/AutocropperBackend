@@ -52,6 +52,7 @@ function getFullConnectedDevice(req,res){
 }
 
 function registerNewDevice(req,res){
+    console.log("Registering");
     const id = req.params.user_id;
     const device = req.body.device_id;
     db.none('INSERT INTO devices(device_id) VALUES($1)',[device])

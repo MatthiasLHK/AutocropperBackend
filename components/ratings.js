@@ -5,7 +5,9 @@ function getTopRated(req,res){
         .then(x=>{
             const result = [];
             for(var i=0; i<5; i++){
-                result.push(x[i]);
+                if(x[i] != undefined){
+                    result.push(x[i]);
+                }
             }
             res.send(result);
         });
@@ -16,7 +18,9 @@ function getNewPost(req,res){
         .then(x=>{
             const result = [];
             for(var i=0; i<5; i++){
-                result.push(x[i]);
+                if(x[i] != undefined){
+                    result.push(x[i]);
+                }
             }
             res.send(result);
         });

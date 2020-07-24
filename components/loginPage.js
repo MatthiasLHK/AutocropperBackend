@@ -46,15 +46,15 @@ function getLoginAuth(req,res){
                         res.status(200).json({status:'Success',message:'Login Successful', user_id: {id}}); // insert here to rediect to homepage
                     }
                     else {
-                        res.status(200).json({status:'Failed',message:'Failed to login(Pass/user wrong)'}); // clear password field
+                        res.status(200).json({status:'Failed',message:'Failed to login(Pass wrong)'}); // clear password field
                     }
                 }
                 else{
                     console.log("Not verified");
-                    res.status(500).json({status:'Failed',message:'Failed to login(Not verified)'});
+                    res.status(200).json({status:'Failed',message:'Failed to login(Not verified)'});
                 }
         })
-        .catch(x=>res.status(500).json({status:'Failed',message:'Failed to login(Overall)'}));
+        .catch(x=>res.status(200).json({status:'Failed',message:'Failed to login(Username wrong)'}));
 }
 
 

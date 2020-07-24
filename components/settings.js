@@ -19,11 +19,13 @@ function addNewSettings(req,res){
     const light = req.body.light;
     const humid = req.body.humidity;
     const comment = req.body.comment;
+    console.log(id);
     db.none('INSERT INTO private_settings(user_id,setting_name,temperature,water,light,humidity,last_updated, comments, edited_on) VALUES($1,$2,$3,$4,$5,$6,NOW(), $7, NOW())'
-        ,[id,name,temperature,water,light,humid, comment])
+        ,[id,name,temperature,water,light,humid,comment])
             .then(()=>{
                 res.status(200).json({status:'Success',message:'Settings Saved'});
-            });
+            })
+            .catch(res.status(200).json({status:'Failed',message:'Value must be between 0 - 100!'}));
 }
 
 function uploadSettings(req,res){
@@ -55,13 +57,20 @@ function editSettings(req,res) {
     const light = req.body.light;
     const humidity = req.body.humidity;
     const setting_name = req.body.setting_name;
-
-    db.none('UPDATE private_settings SET setting_name = $1, temperature = $2, water = $3, light = $4, humidity = $5, last_updated = NOW() WHERE settings_id = $6',
-        [setting_name, temperature, water, light, humidity, settings_id])
+    const comment = req.body.comment;
+    console.log(settings_id);
+    console.log(temperature);
+    console.log(water);
+    console.log(light);
+    console.log(humidity);
+    console.log(setting_name);
+    console.log(comment);
+    db.none('UPDATE private_settings SET setting_name = $1, temperature = $2, water = $3, light = $4, humidity = $5, last_updated = NOW(), comments = $7 WHERE settings_id = $6',
+        [setting_name, temperature, water, light, humidity, settings_id, comment])
         .then(() => {
             res.status(200).json({status: 'Success', message: 'Settings Updated'})
         })
-        .catch(err => console.log(err))
+        .catch(res.status(200).json({status:'Failed',message:'Value must be between 0 - 100!'}));
 }
 
 function deleteSettings(req, res) {

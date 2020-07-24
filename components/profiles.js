@@ -60,7 +60,7 @@ function updateProfile(req,res){
 
 function getUserDetails(req, res) {
     const id = req.params.id;
-    db.manyOrNone('SELECT email FROM user_detail WHERE user_id = $1', [id])
+    db.manyOrNone('SELECT * FROM user_detail WHERE user_id = $1', [id])
         .then(x => res.send(x))
 }
 
