@@ -58,13 +58,6 @@ function editSettings(req,res) {
     const humidity = req.body.humidity;
     const setting_name = req.body.setting_name;
     const comment = req.body.comment;
-    console.log(settings_id);
-    console.log(temperature);
-    console.log(water);
-    console.log(light);
-    console.log(humidity);
-    console.log(setting_name);
-    console.log(comment);
     db.none('UPDATE private_settings SET setting_name = $1, temperature = $2, water = $3, light = $4, humidity = $5, last_updated = NOW(), comments = $7 WHERE settings_id = $6',
         [setting_name, temperature, water, light, humidity, settings_id, comment])
         .then(() => {
