@@ -84,9 +84,20 @@ function sendDevice(req,res){
         .catch(err=>res.status(500).json(err));
 }
 
+function removeDevice(req,res){
+    const id = req.params.device_id;
+    db.none('DELETE FROM devices WHERE device_id = $1',[id])
+        .then(()=>res.status(200).json({status:'Success'}))
+        .catch(err=>{
+            console.log(err);
+            res.status(200).json({status:'Failed'});
+        });
+}
+
 module.exports = {
     getConnectedDevice: getConnectedDevice,
     getFullConnectedDevice: getFullConnectedDevice,
     registerNewDevice: registerNewDevice,
-    sendDevice: sendDevice
+    sendDevice: sendDevice,
+    removeDevice: removeDevice
 };

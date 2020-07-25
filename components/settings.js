@@ -28,33 +28,20 @@ function addNewSettings(req,res){
             .catch(err=>res.status(200).json({status:'Failed',message:'Value must be between 0 - 100!'}));
 }
 
-// function uploadSettings(req,res){
-//     const setting = req.body.setting_id;
-//     db.none('UPDATE private_settings SET shared = true WHERE settings_id = $1',[setting]);
-//     db.one('SELECT * FROM private_settings WHERE settings_id = $1',[setting])
-//         .then(x=>{
-//             db.none('INSERT INTO shared_settings(settings_id,user_id,setting_name,temperature,water,light,humidity,last_updated,rating,comments,edited_on) VALUES($1,$2,$3,$4,$5,$6,$7,NOW(),0,$8,NOW())'
-//                 ,[setting,x.user_id,x.setting_name,x.temperature,x.water,x.light,x.humidity,x.comments])
-//                     .then(()=>{
-//                         res.status(200).json({status:'Success',message:'Settings Uploaded'});
-//                     }).catch(err=>{console.log(err);});
-//         })
-//             .catch(err=>{console.log(err);});
-// }
-
 function uploadSettings(req,res){
     const setting = req.body.setting_id;
     db.none('UPDATE private_settings SET shared = true WHERE settings_id = $1',[setting]);
     db.one('SELECT * FROM private_settings WHERE settings_id = $1',[setting])
         .then(x=>{
-            db.none('INSERT INTO shared_settings(user_id,setting_name,temperature,water,light,humidity,last_updated,rating,comments,edited_on) VALUES($1,$2,$3,$4,$5,$6,$7,NOW(),0,$8,NOW())'
-                ,[x.user_id,x.setting_name,x.temperature,x.water,x.light,x.humidity,x.comments])
+            db.none('INSERT INTO shared_settings(settings_id,user_id,setting_name,temperature,water,light,humidity,last_updated,rating,comments,edited_on) VALUES($1,$2,$3,$4,$5,$6,$7,NOW(),0,$8,NOW())'
+                ,[setting,x.user_id,x.setting_name,x.temperature,x.water,x.light,x.humidity,x.comments])
                     .then(()=>{
                         res.status(200).json({status:'Success',message:'Settings Uploaded'});
                     }).catch(err=>{console.log(err);});
         })
             .catch(err=>{console.log(err);});
 }
+
 
 function removeUpload(req,res){
     const id = req.body.id;

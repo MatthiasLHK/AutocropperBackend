@@ -25,6 +25,7 @@ app.post('/push-to-device/',D.sendDevice);
 app.get('/profile/connected-devices-profile/:id',D.getFullConnectedDevice); // get full info on registered DEVICES //
 app.post('/register-new-device/:user_id',D.registerNewDevice); // add new device to Account //
 app.get('/devices/active/:id',D.getFullConnectedDevice);
+app.post('/devices/remove/:device_id',D.removeDevice);
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 app.get('/top-5-rated',R.getTopRated); // get info on the top 5 SETTINGS //
 app.get('/newly-posted',R.getNewPost); // get info on the 5 newest SETTINGS //
